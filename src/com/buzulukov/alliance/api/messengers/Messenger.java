@@ -1,8 +1,8 @@
-package com.buzulukov.alliance.api.libraries;
+package com.buzulukov.alliance.api.messengers;
 
 import java.util.LinkedList;
 
-public interface API_Library {
+public interface Messenger {
 
     String getName();
 

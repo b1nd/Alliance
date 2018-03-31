@@ -1,4 +1,4 @@
-package com.buzulukov.alliance.api.libraries;
+package com.buzulukov.alliance.api.messengers;
 
 import java.util.LinkedList;
 
