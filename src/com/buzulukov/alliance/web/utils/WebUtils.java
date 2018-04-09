@@ -56,7 +56,7 @@ public final class WebUtils {
         return response.toString();
     }
 
-    private static String getUrl(String methodUrl, String... params) {
+    public static String getUrl(String methodUrl, String... params) {
         StringBuilder url = new StringBuilder(methodUrl + "?");
 
         if (params.length != 0) {

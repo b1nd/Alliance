@@ -6,7 +6,7 @@ public interface Messenger {
 
     String getName();
 
-    void login();
+    void login(String loginType);
 
     void logout();
 

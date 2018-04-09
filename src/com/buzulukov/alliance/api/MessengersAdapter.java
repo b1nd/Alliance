@@ -15,13 +15,15 @@ public class MessengersAdapter {
         instance = new MessengersAdapter();
     }
 
-    public MessengersAdapter getInstance() {
+    public static MessengersAdapter getInstance() {
         return instance;
     }
 
+    private LinkedList<Messenger> uncheckedMessengers;
     private HashMap<String, Messenger> messengers;
 
     private MessengersAdapter() {
+        uncheckedMessengers = new LinkedList<>();
         messengers = new HashMap<>();
     }
 
@@ -41,21 +43,29 @@ public class MessengersAdapter {
         return MessengersFactory.MESSENGER_NAMES;
     }
 
-    public boolean authorize(String messengerName) {
+    public void authorize(String messengerName, String loginType) {
         var messengersFactory = new MessengersFactory();
         var messenger = messengersFactory.getMessenger(messengerName);
 
-        messenger.login();
+        messenger.login(loginType);
+        uncheckedMessengers.add(messenger);
+    }
 
-        if (messenger.isAuthorized()) {
-            String accountName = messengerName + " " + messenger.getAccountInfo();
+    public boolean updateMessengers() {
+        boolean updated = false;
 
-            if (!messengers.containsKey(accountName)) {
-                messengers.put(accountName, messenger);
-                return true;
+        for (var messenger : uncheckedMessengers) {
+            if (messenger.isAuthorized()) {
+                String accountName = messenger.getName() + " " + messenger.getAccountInfo();
+
+                if (!messengers.containsKey(accountName)) {
+                    messengers.put(accountName, messenger);
+                    updated = true;
+                }
             }
         }
-        return false;
+        uncheckedMessengers.clear();
+        return updated;
     }
 
     public boolean logout(String accountName) {
