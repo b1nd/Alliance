@@ -16,4 +16,6 @@ public interface Messenger {
 
     LinkedList<Chat> getChats();
 
+    boolean updateChats();
+
 }

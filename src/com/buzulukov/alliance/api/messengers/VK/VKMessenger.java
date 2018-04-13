@@ -3,25 +3,30 @@ package com.buzulukov.alliance.api.messengers.VK;
 import com.buzulukov.alliance.api.messengers.Chat;
 import com.buzulukov.alliance.api.messengers.Messenger;
 import com.buzulukov.alliance.web.utils.WebUtils;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
-import java.util.Arrays;
+import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VKMessenger implements Messenger {
+public class VKMessenger implements Messenger, Serializable {
 
-    private static final String API_LIBRARY_NAME = "VK";
+    public static final String LIBRARY_NAME = "VK";
+
     private static final String API_VERSION = "5.71";
 
     private static final String REDIRECT_URI = "https://oauth.vk.com/blank.html";
-    private static final int CLIENT_ID = 6338916;
+    private static final String METHOD_URI = "https://api.vk.com/method/";
+    private static final int CLIENT_ID = 6447450;
     private static final String[] ACCESS_SCOPES = {
             "offline",
             "messages"
@@ -47,7 +52,7 @@ public class VKMessenger implements Messenger {
 
     @Override
     public String getName() {
-        return API_LIBRARY_NAME;
+        return LIBRARY_NAME;
     }
 
     @Override
@@ -65,7 +70,7 @@ public class VKMessenger implements Messenger {
 
     @Override
     public void logout() {
-
+        isAuthorized = false;
     }
 
     @Override
@@ -75,12 +80,112 @@ public class VKMessenger implements Messenger {
 
     @Override
     public String getAccountInfo() {
+        if (accountInfo == null) {
+            String response = WebUtils.getResponse(METHOD_URI + "account.getProfileInfo",
+                    "access_token=" + accessToken,
+                    "v=" + API_VERSION);
+            var responseObject = jsonParser.parse(response).getAsJsonObject().get("response").getAsJsonObject();
+            accountInfo = responseObject.get("first_name").getAsString() + " " +
+                    responseObject.get("last_name").getAsString();
+        }
         return accountInfo;
     }
 
     @Override
     public LinkedList<Chat> getChats() {
+        if (chats == null) {
+            chats = new LinkedList<>();
+            var userIds = new StringBuilder();
+            var response = WebUtils.getResponse(METHOD_URI + "messages.getDialogs",
+                    "access_token=" + accessToken,
+                    "v=" + API_VERSION,
+                    "count=200");
+            System.out.println(response);
+            var responseObject = getJsonObjectFromResponse(response);
+            var itemsArray = responseObject.get("items").getAsJsonArray();
+
+            for (int i = 0; i < itemsArray.size(); ++i) {
+                var messageObject = itemsArray
+                        .get(i).getAsJsonObject()
+                        .get("message").getAsJsonObject();
+
+                //Пропуск сообщений из сообществ
+                if (messageObject.get("user_id").getAsInt() < 0) {
+                    continue;
+                }
+
+                var chatTitle = messageObject.get("title").getAsString();
+                int chatId = 0;
+
+                if (messageObject.has("chat_id")) {
+                    chatId = messageObject.get("chat_id").getAsInt();
+                } else {
+                    if (userIds.length() != 0) {
+                        userIds.append(",");
+                    }
+                    userIds.append(messageObject.get("user_id").getAsString());
+                }
+                VKChat chat = new VKChat(chatTitle, chatId);
+                VKMessage message = createMessageFromJsonObject(messageObject);
+                chat.messages.addLast(message);
+                chats.addLast(chat);
+            }
+
+            if (userIds.length() != 0) {
+                response = WebUtils.getResponse(METHOD_URI + "users.get",
+                        "access_token=" + accessToken,
+                        "v=" + API_VERSION,
+                        "user_ids=" + userIds.toString());
+
+                var responseArray = getJsonArrayFromResponse(response);
+                int i = 0;
+
+                for (Chat chat : chats) {
+                    if (chat.getTitle().isEmpty()) {
+                        JsonObject userObject = responseArray.get(i).getAsJsonObject();
+                        String firstName = userObject.get("first_name").getAsString();
+                        String lastName = userObject.get("last_name").getAsString();
+                        ((VKChat) chat).title = firstName + " " + lastName;
+                        ++i;
+                    }
+                }
+            }
+        }
+
         return chats;
+    }
+
+    @Override
+    public boolean updateChats() {
+        return false;
+    }
+
+    private VKMessage createMessageFromJsonObject(JsonObject messageObject) {
+        String messageText = messageObject.get("body").getAsString();
+
+        if (messageText.isEmpty()) {
+            if (messageObject.has("attachments")) {
+                messageText = "[Attachment]";
+            } else if (messageObject.has("fwd_messages")) {
+                messageText = "[Forwarded message]";
+            } else if (messageObject.has("action")) {
+                messageText = "[Action]";
+            }
+        }
+        Date messageDate = new Date(messageObject.get("date").getAsLong() * 1000);
+        int messageId = messageObject.get("id").getAsInt();
+        int messageUserId = messageObject.get("user_id").getAsInt();
+        boolean messageOutgoing = (messageObject.get("out").getAsInt() == 1);
+
+        return new VKMessage(messageText, messageDate, messageId, messageUserId, messageOutgoing);
+    }
+
+    private JsonObject getJsonObjectFromResponse(String response) {
+        return jsonParser.parse(response).getAsJsonObject().get("response").getAsJsonObject();
+    }
+
+    private JsonArray getJsonArrayFromResponse(String response) {
+        return jsonParser.parse(response).getAsJsonObject().get("response").getAsJsonArray();
     }
 
     private class VKLoginFacade {
@@ -88,13 +193,16 @@ public class VKMessenger implements Messenger {
 
         VKLoginFacade() {
             StringBuilder scopes = new StringBuilder();
-            Arrays.stream(ACCESS_SCOPES).forEach(s -> scopes.append(s).append(","));
+            for(int i = 0; i < ACCESS_SCOPES.length - 1; ++i) {
+                scopes.append(ACCESS_SCOPES[i]).append(",");
+            }
+            scopes.append(ACCESS_SCOPES[ACCESS_SCOPES.length - 1]);
 
             url = WebUtils.getUrl("https://oauth.vk.com/authorize",
                     "client_id=" + CLIENT_ID,
                     "display=page",
                     "redirect_uri=" + REDIRECT_URI,
-                    "scopes=" + scopes,
+                    "scope=" + scopes,
                     "response_type=token",
                     "v=" + API_VERSION);
         }
@@ -118,7 +226,7 @@ public class VKMessenger implements Messenger {
                         accessToken = matcher.group(1);
                         userId = Integer.parseInt(matcher.group(2));
                         isAuthorized = true;
-                        //saveAccountData();
+
                         stage.close();
                     }
                 }

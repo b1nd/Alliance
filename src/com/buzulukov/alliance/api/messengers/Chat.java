@@ -12,6 +12,8 @@ public interface Chat extends Comparable<Chat> {
 
     Message getLastMessage();
 
+    Message getFirstMessage();
+
     boolean areAllMessagesLoaded();
 
     boolean update();
@@ -22,4 +24,59 @@ public interface Chat extends Comparable<Chat> {
 
     void sendMessage(String text);
 
+    Chat EMPTY = new Chat() {
+
+        @Override
+        public String getLibraryName() {
+            return null;
+        }
+
+        @Override
+        public String getTitle() {
+            return null;
+        }
+
+        @Override
+        public LinkedList<Message> getMessages() {
+            return null;
+        }
+
+        @Override
+        public Message getFirstMessage() {
+            return null;
+        }
+
+        @Override
+        public Message getLastMessage() {
+            return null;
+        }
+
+        @Override
+        public boolean areAllMessagesLoaded() {
+            return false;
+        }
+
+        @Override
+        public boolean update() {
+            return false;
+        }
+
+        @Override
+        public void loadMessages() {
+        }
+
+        @Override
+        public void unloadMessages() {
+        }
+
+        @Override
+        public void sendMessage(String text) {
+        }
+
+        @Override
+        public int compareTo(Chat o) {
+            return 0;
+        }
+
+    };
 }

@@ -3,6 +3,7 @@ package com.buzulukov.alliance.api;
 import com.buzulukov.alliance.api.messengers.Chat;
 import com.buzulukov.alliance.api.messengers.Messenger;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -27,15 +28,29 @@ public class MessengersAdapter {
         messengers = new HashMap<>();
     }
 
-    public LinkedList<Chat> getChats() {
+    public LinkedList<Chat> getChats(String... names) {
         var chats = new LinkedList<Chat>();
 
-        for (var messenger : messengers.values()) {
-            if (messenger.isAuthorized()) {
-                chats.addAll(messenger.getChats());
+        if (names.length == 0) {
+            for (var messenger : messengers.values()) {
+                if (messenger.isAuthorized()) {
+                    chats.addAll(messenger.getChats());
+                }
+            }
+        } else {
+            var namesList = new LinkedList<>(Arrays.asList(names));
+
+            for (var messenger : messengers.values()) {
+                if (messenger.isAuthorized() && namesList.contains(messenger.getName())) {
+                    chats.addAll(messenger.getChats());
+                }
             }
         }
-        Collections.sort(chats);
+        if (chats.isEmpty()) {
+            chats.add(Chat.EMPTY);
+        } else {
+            Collections.sort(chats);
+        }
         return chats;
     }
 
@@ -65,6 +80,29 @@ public class MessengersAdapter {
             }
         }
         uncheckedMessengers.clear();
+        return updated;
+    }
+
+    public boolean updateChats() {
+        boolean updated = false;
+
+        for(var messenger : messengers.values()) {
+            if(messenger.updateChats()) {
+                updated = true;
+            }
+        }
+        return updated;
+    }
+
+    public boolean saveAccounts(String path) {
+        boolean updated = false;
+        // TODO: Serialize hash_map
+        return updated;
+    }
+
+    public boolean loadAccounts(String path) {
+        boolean updated = false;
+        // TODO: Deserialize hash_map
         return updated;
     }
 

@@ -7,6 +7,8 @@ import java.util.LinkedList;
 
 public class SlackMessenger implements Messenger {
 
+    public static final String LIBRARY_NAME = "Slack";
+
     @Override
     public String getName() {
         return null;
@@ -35,5 +37,10 @@ public class SlackMessenger implements Messenger {
     @Override
     public LinkedList<Chat> getChats() {
         return null;
+    }
+
+    @Override
+    public boolean updateChats() {
+        return false;
     }
 }
