@@ -9,6 +9,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -21,6 +23,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import java.text.SimpleDateFormat;
 import java.util.concurrent.Callable;
@@ -64,7 +67,7 @@ public class MainController {
 
             if (App.MESSENGERS_ADAPTER.updateMessengers()) {
                 System.out.println("Some messengers were added");
-                loadDialogsScreen();
+                Platform.runLater(this::updateDialogsScreen);
             }
         }
     }
@@ -94,6 +97,7 @@ public class MainController {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     private final static double DIALOGS_PANE_MIN_WIDTH = 135;
+    private final static int MESSAGES_UPDATE_TIME_MS = 1000;
 
     @FXML
     public AnchorPane dialogsAnchorPane;
@@ -106,7 +110,27 @@ public class MainController {
     @FXML
     public ListView<Chat> dialogsListView;
 
-    private void loadDialogsScreen(String... messengerNames) {
+    private ScheduledService<Boolean> updateService = new ScheduledService<Boolean>() {
+        @Override
+        protected Task<Boolean> createTask() {
+            return new Task<Boolean>() {
+                @Override
+                protected Boolean call() {
+                    if (isCancelled()) {
+                        return false;
+                    }
+                    boolean updated = App.MESSENGERS_ADAPTER.updateChats();
+
+                    if (updated) {
+                        Platform.runLater(MainController.this::updateDialogsScreen);
+                    }
+                    return updated;
+                }
+            };
+        }
+    };
+
+    private void updateDialogsScreen(String... messengerNames) {
         ObservableList<Chat> items = FXCollections.observableArrayList();
 
         items.addAll(App.MESSENGERS_ADAPTER.getChats(messengerNames));
@@ -115,18 +139,16 @@ public class MainController {
         dialogsListView.refresh();
     }
 
-    private void updateDialogsScreen() {
-        ObservableList<Chat> items = FXCollections.observableArrayList();
-
-        //items.addAll(App.MESSENGERS_ADAPTER.getDialogs());
-
-        dialogsListView.setItems(items);
-        dialogsListView.refresh();
-    }
-
     private void initializeDialogs() {
         initializeDialogsListView();
         initializeDialogsPane();
+        initializeDialogsUpdate();
+    }
+
+    private void initializeDialogsUpdate() {
+        updateService.setDelay(Duration.millis(MESSAGES_UPDATE_TIME_MS));
+        updateService.setPeriod(Duration.millis(MESSAGES_UPDATE_TIME_MS));
+        updateService.start();
     }
 
     private void initializeDialogsListView() {
