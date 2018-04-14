@@ -109,8 +109,18 @@ public class VKMessenger implements Messenger, Serializable {
                         .get(i).getAsJsonObject()
                         .get("message").getAsJsonObject();
 
-                //Пропуск сообщений из сообществ
+                // Handle messages from groups.
                 if (messageObject.get("user_id").getAsInt() < 0) {
+                    int groupId = Math.abs(messageObject.get("user_id").getAsInt());
+                    response = WebUtils.getResponse(METHOD_URI + "groups.getById",
+                            "group_id=" + groupId,
+                            "v=" + API_VERSION);
+                    var responseGroupObject = getJsonArrayFromResponse(response).get(0).getAsJsonObject();
+                    String chatTitle = responseGroupObject.get("name").getAsString();
+                    VKChat chat = new VKChat(chatTitle, messageObject.get("user_id").getAsInt());
+                    VKMessage message = createMessageFromJsonObject(messageObject);
+                    chat.getMessages().addLast(message);
+                    chats.addLast(chat);
                     continue;
                 }
                 var chatTitle = messageObject.get("title").getAsString();
@@ -172,10 +182,19 @@ public class VKMessenger implements Messenger, Serializable {
         var chatObject = itemsArray.get(itemsArray.size() - 1).getAsJsonObject();
         var messageObject = chatObject.get("message").getAsJsonObject();
 
-        // Skip messages from groups.
+        // Handle messages from groups.
         if (messageObject.get("user_id").getAsInt() < 0) {
-            lastMessage.id = messageObject.get("id").getAsInt();
-            return false;
+            int groupId = Math.abs(messageObject.get("user_id").getAsInt());
+            response = WebUtils.getResponse(METHOD_URI + "groups.getById",
+                    "group_id=" + groupId,
+                    "v=" + API_VERSION);
+            var responseGroupObject = getJsonArrayFromResponse(response).get(0).getAsJsonObject();
+            String chatTitle = responseGroupObject.get("name").getAsString();
+            VKChat chat = new VKChat(chatTitle, messageObject.get("user_id").getAsInt());
+            VKMessage message = createMessageFromJsonObject(messageObject);
+            chat.getMessages().addLast(message);
+            chats.addLast(chat);
+            return true;
         }
         var chatTitle = messageObject.get("title").getAsString();
         int chatId = 0;
@@ -212,7 +231,7 @@ public class VKMessenger implements Messenger, Serializable {
                         return true;
                     }
                 } else {
-                    if(((VKMessage)chatIt.getLastMessage()).userId == message.userId) {
+                    if (((VKMessage) chatIt.getLastMessage()).userId == message.userId) {
                         chatIt.getMessages().addLast(message);
                         return true;
                     }
