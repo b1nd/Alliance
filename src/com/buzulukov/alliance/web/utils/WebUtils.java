@@ -30,7 +30,8 @@ public final class WebUtils {
             connection.connect();
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                try (BufferedReader in = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
                     String line;
 
                     while ((line = in.readLine()) != null) {
