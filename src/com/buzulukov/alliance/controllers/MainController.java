@@ -26,6 +26,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 import java.text.SimpleDateFormat;
@@ -39,62 +40,13 @@ public class MainController {
     private static final SimpleDateFormat HOURS_MINS = new SimpleDateFormat("HH:mm");
 
     @FXML
-    public SplitPane settingsDialogsSplitPane;
-    @FXML
     public SplitPane dialogsChatSplitPane;
+    @FXML
+    public Button settingsButton;
 
     public void initialize() {
         initializeChat();
-        initializeSettings();
         initializeDialogs();
-    }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//                                       SETTINGS PANE                                           //
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private static final double SETTINGS_PANE_MAX_WIDTH = 200;
-
-    @FXML
-    public AnchorPane settingsAnchorPane;
-    @FXML
-    public ComboBox<String> accountLoginChoice;
-    @FXML
-    public Button loginButton;
-
-    public void onSettingsButtonToggled(ActionEvent actionEvent) {
-        if (settingsToggleButton.isSelected()) {
-            settingsAnchorPane.setMaxWidth(SETTINGS_PANE_MAX_WIDTH);
-            settingsAnchorPane.setMinWidth(SETTINGS_PANE_MAX_WIDTH);
-        } else {
-            settingsAnchorPane.setMinWidth(0);
-            settingsAnchorPane.setMaxWidth(0);
-
-            if (App.MESSENGERS_ADAPTER.updateMessengers()) {
-                System.out.println("Some messengers were added");
-                Platform.runLater(this::updateDialogsScreen);
-            }
-        }
-    }
-
-    private void initializeSettings() {
-        initializeSettingsSize();
-        loadAccountNames();
-    }
-
-    private void initializeSettingsSize() {
-        settingsAnchorPane.setMinWidth(0);
-        settingsAnchorPane.setMaxWidth(0);
-    }
-
-    private void loadAccountNames() {
-        var loginItems = FXCollections.observableArrayList(App.MESSENGERS_ADAPTER.getMessengerNames());
-        accountLoginChoice.setItems(loginItems);
-        accountLoginChoice.setValue(loginItems.get(0));
-    }
-
-    public void onLoginClicked(ActionEvent actionEvent) {
-        App.MESSENGERS_ADAPTER.authorize(accountLoginChoice.getValue(), "desktop");
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,8 +60,6 @@ public class MainController {
     public AnchorPane dialogsAnchorPane;
     @FXML
     public MenuButton accountsChoice;
-    @FXML
-    public ToggleButton settingsToggleButton;
     @FXML
     public TextField searchTextField;
     @FXML
@@ -169,6 +119,14 @@ public class MainController {
         dialogsAnchorPane.setMinWidth(DIALOGS_PANE_MIN_WIDTH);
     }
 
+    public void onSettingsClicked(ActionEvent actionEvent) {
+
+    }
+
+    public void onBackToDialogs(ActionEvent actionEvent) {
+
+    }
+
     static class ChatCell extends ListCell<Chat> {
         private static final Insets INSETS = new Insets(5);
 
@@ -183,7 +141,7 @@ public class MainController {
                     TextField emptyTextField = new TextField("Chats will be shown here.");
                     emptyTextField.setEditable(false);
                     emptyTextField.setAlignment(Pos.CENTER);
-                    emptyTextField.setOpaqueInsets(new Insets(-3));
+                    emptyTextField.setOpaqueInsets(new Insets(5));
                     emptyTextField.setBackground(new Background(new BackgroundFill(
                             MESSAGE_WRAPPER_COLOR,
                             new CornerRadii(15),
@@ -214,8 +172,9 @@ public class MainController {
                     }
                     TextField messageTextField = new TextField(messageText);
                     messageTextField.setEditable(false);
-                    messageTextField.getStylesheets().add("com/buzulukov/alliance/styles/transparentTextField.css");
+                    messageTextField.getStyleClass().setAll("text-field-transparent");
                     messageTextField.setPadding(new Insets(0, 0, 0, 0));
+
                     Label fromLabel;
 
                     if (item.getLastMessage().isOutgoing()) {
@@ -255,7 +214,7 @@ public class MainController {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static final double CHAT_PANE_MIN_WIDTH = 300;
-    private static final Color MESSAGE_WRAPPER_COLOR = Color.web("ACE0EE");
+    private static final Color MESSAGE_WRAPPER_COLOR = Color.web("009287");
     private static final int TEXT_INPUT_MAX_NUMBER_OF_LINES = 20;
 
     @FXML
@@ -285,8 +244,11 @@ public class MainController {
 
     private void initializeEmptyChat() {
         var pane = new BorderPane();
+        pane.getStyleClass().setAll("pane");
         pane.setMinWidth(CHAT_PANE_MIN_WIDTH);
         var label = new Label("Select chat to start messaging.");
+        label.setMinWidth(250);
+        label.setAlignment(Pos.CENTER);
         var grey = new Background(new BackgroundFill(
                 MESSAGE_WRAPPER_COLOR,
                 new CornerRadii(15),

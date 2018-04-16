@@ -1,11 +1,13 @@
 package com.buzulukov.alliance;
 
 import com.buzulukov.alliance.api.MessengersAdapter;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class App extends Application {
 
@@ -16,7 +18,9 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         mainRoot = FXMLLoader.load(App.class.getResource("layouts/main.fxml"));
-        //mainRoot.getStylesheets().add("com/buzulukov/alliance/styles/chat.css");
+        mainRoot.getStylesheets().addAll(
+                "com/buzulukov/alliance/styles/chat.css",
+                "com/buzulukov/alliance/styles/dialogs.css");
         this.stage = stage;
         stage.setScene(new Scene(mainRoot));
         stage.show();

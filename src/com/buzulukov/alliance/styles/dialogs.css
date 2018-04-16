@@ -1,0 +1,74 @@
+.text-field-transparent, .text-field-transparent:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0px;
+}
+
+.button-menu {
+    -fx-background-image: url("../resources/menu-button-focus.png");
+    -fx-background-color: transparent;
+}
+
+.label-bold {
+    -fx-text-fill: #fafafa;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-font-family: Tahoma;
+}
+
+.label-message {
+    -fx-text-fill: #6e939e;
+    -fx-font-size: 12px;
+    -fx-font-family: Tahoma;
+}
+
+.text-field-message {
+    -fx-text-fill: #6e939e;
+    -fx-font-size: 12px;
+    -fx-font-family: Tahoma;
+    -fx-highlight-text-fill: #6e939e;
+    -fx-prompt-text-fill: #6e939e;
+    -fx-highlight-fill: #009287;
+}
+
+.text-field-search {
+    -fx-text-fill: #6e939e;
+    -fx-font-size: 12px;
+    -fx-font-family: Tahoma;
+    -fx-highlight-text-fill: #fafafa;
+    -fx-prompt-text-fill: #6e939e;
+    -fx-highlight-fill: #009287;
+    -fx-background-color: #3d444b;
+}
+
+.menu-button-choice {
+    -fx-background-color: #3d444b;
+    -fx-text-fill: #6e939e;
+    -fx-font-family: Tahoma;
+}
+
+.list-view-dialogs {
+    -fx-background-color: #282e33;
+}
+
+.list-cell {
+    -fx-background-color: #282e33;
+}
+
+.separator {
+    -fx-background-color: black;
+}
+
+.split-pane-divider {
+    -fx-background-color: #18191d;
+    -fx-background-insets: 0;
+    -fx-padding: 0.2;
+}
+
+.container {
+    -fx-background-color: #282e33;
+}
+
+.pane {
+    -fx-background-color: #18191d;
+}
+

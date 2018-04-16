@@ -1,0 +1,35 @@
+.button-send {
+    -fx-background-image: url("../resources/send-button-focus.png");
+    -fx-background-color: transparent;
+}
+
+.button-back {
+    -fx-background-image: url("../resources/back-button-focus.png");
+    -fx-background-color: transparent;
+}
+
+.list-view-chat {
+    -fx-background-color: #18191d;
+}
+
+.text-area-send {
+    -fx-background-color: #282e33;
+    -fx-highlight-fill: #009287;
+    -fx-highlight-text-fill: #fafafa;
+    -fx-prompt-text-fill: #6e939e;
+    -fx-text-fill: #6e939e;
+    -fx-font-size: 13px;
+    -fx-font-family: Tahoma;
+}
+
+.text-area-send .content {
+    -fx-background-color: #282e33;
+    -fx-border-color: #282e33;
+    -fx-border-width: 3;
+}
+
+.text-area-send .scroll-pane {
+    -fx-vbar-policy: never;
+    -fx-hbar-policy: never;
+}
+
