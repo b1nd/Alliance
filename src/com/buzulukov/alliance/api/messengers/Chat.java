@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 public interface Chat extends Comparable<Chat> {
 
+    String getChatPhotoUri();
+
     String getLibraryName();
 
     String getTitle();
@@ -25,6 +27,11 @@ public interface Chat extends Comparable<Chat> {
     void sendMessage(String text);
 
     Chat EMPTY = new Chat() {
+
+        @Override
+        public String getChatPhotoUri() {
+            return null;
+        }
 
         @Override
         public String getLibraryName() {

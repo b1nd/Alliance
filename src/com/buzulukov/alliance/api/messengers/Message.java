@@ -1,6 +1,7 @@
 package com.buzulukov.alliance.api.messengers;
 
 import java.util.Date;
+import java.util.LinkedList;
 
 public interface Message extends Comparable<Message> {
 
@@ -9,6 +10,8 @@ public interface Message extends Comparable<Message> {
     Date getDate();
 
     boolean isOutgoing();
+
+    LinkedList<String> getImagesUrl();
 
     Message EMPTY = new Message() {
 
@@ -25,6 +28,11 @@ public interface Message extends Comparable<Message> {
         @Override
         public boolean isOutgoing() {
             return false;
+        }
+
+        @Override
+        public LinkedList<String> getImagesUrl() {
+            return null;
         }
 
         @Override

@@ -7,16 +7,30 @@ import java.util.LinkedList;
 
 public class VKChat implements Chat {
 
+    String chatPhotoUri;
     String title;
     int id;
     LinkedList<Message> messages;
     boolean allMessagesLoaded;
+
+    VKChat(String chatPhotoUri, String title, int id) {
+        this.chatPhotoUri = chatPhotoUri;
+        this.title = title;
+        this.id = id;
+        messages = new LinkedList<>();
+        allMessagesLoaded = false;
+    }
 
     VKChat(String title, int id) {
         this.title = title;
         this.id = id;
         messages = new LinkedList<>();
         allMessagesLoaded = false;
+    }
+
+    @Override
+    public String getChatPhotoUri() {
+        return chatPhotoUri;
     }
 
     @Override

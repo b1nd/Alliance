@@ -3,6 +3,7 @@ package com.buzulukov.alliance.api.messengers.VK;
 import com.buzulukov.alliance.api.messengers.Message;
 
 import java.util.Date;
+import java.util.LinkedList;
 
 public class VKMessage implements Message {
 
@@ -11,6 +12,7 @@ public class VKMessage implements Message {
     Date    date;
     String  text;
     boolean outgoing;
+    LinkedList<String> imagesUrl;
 
     VKMessage(String text, Date date, int id, int userId, boolean outgoing) {
         this.text = text;
@@ -18,6 +20,7 @@ public class VKMessage implements Message {
         this.id = id;
         this.userId = userId;
         this.outgoing = outgoing;
+        imagesUrl = new LinkedList<>();
     }
 
     @Override
@@ -33,6 +36,11 @@ public class VKMessage implements Message {
     @Override
     public boolean isOutgoing() {
         return outgoing;
+    }
+
+    @Override
+    public LinkedList<String> getImagesUrl() {
+        return imagesUrl;
     }
 
     @Override

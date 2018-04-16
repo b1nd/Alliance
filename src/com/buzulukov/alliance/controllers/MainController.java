@@ -17,9 +17,12 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -30,8 +33,10 @@ import java.util.concurrent.Callable;
 
 public class MainController {
 
-    // Date format: 23:24 ср 07.03
+    // Date format: 23:24 ср 15.04
     private static final SimpleDateFormat SHORT_DATE_FORMAT = new SimpleDateFormat("HH:mm E dd.MM");
+    // Date format: 23:24
+    private static final SimpleDateFormat HOURS_MINS = new SimpleDateFormat("HH:mm");
 
     @FXML
     public SplitPane settingsDialogsSplitPane;
@@ -96,7 +101,7 @@ public class MainController {
 //                                        DIALOGS PANE                                           //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private final static double DIALOGS_PANE_MIN_WIDTH = 135;
+    private final static double DIALOGS_PANE_MIN_WIDTH = 250;
     private final static int MESSAGES_UPDATE_TIME_MS = 1000;
 
     @FXML
@@ -154,6 +159,10 @@ public class MainController {
     private void initializeDialogsListView() {
         dialogsListView.setSelectionModel(new NoSelectionModel<>());
         dialogsListView.setCellFactory(param -> new ChatCell());
+
+        ObservableList<Chat> items = FXCollections.observableArrayList();
+        items.add(Chat.EMPTY);
+        dialogsListView.setItems(items);
     }
 
     private void initializeDialogsPane() {
@@ -161,7 +170,7 @@ public class MainController {
     }
 
     static class ChatCell extends ListCell<Chat> {
-        private static final Insets INSETS = new Insets(10);
+        private static final Insets INSETS = new Insets(5);
 
         @Override
         protected void updateItem(Chat item, boolean empty) {
@@ -171,41 +180,69 @@ public class MainController {
                 setGraphic(null);
             } else {
                 if (item == Chat.EMPTY) {
-                    Label label = new Label("Chats will be shown here.");
-
-                    StackPane stackPane = new StackPane(label);
+                    TextField emptyTextField = new TextField("Chats will be shown here.");
+                    emptyTextField.setEditable(false);
+                    emptyTextField.setAlignment(Pos.CENTER);
+                    emptyTextField.setOpaqueInsets(new Insets(-3));
+                    emptyTextField.setBackground(new Background(new BackgroundFill(
+                            MESSAGE_WRAPPER_COLOR,
+                            new CornerRadii(15),
+                            new Insets(0))));
+                    StackPane stackPane = new StackPane(emptyTextField);
                     stackPane.setPadding(INSETS);
-                    StackPane.setAlignment(label, Pos.CENTER_LEFT);
+                    StackPane.setAlignment(emptyTextField, Pos.CENTER_LEFT);
 
                     setGraphic(stackPane);
                 } else {
                     Label titleLabel = new Label(item.getTitle());
-                    titleLabel.setMinWidth(150);
-                    titleLabel.setMaxWidth(150);
-                    titleLabel.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, Font.getDefault().getSize()));
+                    titleLabel.setFont(Font.font(
+                            Font.getDefault().getFamily(),
+                            FontWeight.BOLD,
+                            Font.getDefault().getSize()));
+                    Label dateLabel = new Label(HOURS_MINS.format(item.getLastMessage().getDate()) +
+                            " " + item.getLibraryName());
+                    dateLabel.setMinWidth(50);
+
+                    Pane justSpace = new Pane();
+                    HBox topHBox = new HBox(titleLabel, justSpace, dateLabel);
+                    HBox.setHgrow(justSpace, Priority.ALWAYS);
 
                     String messageText = item.getLastMessage().getText();
 
                     if (messageText.contains("\n")) {
                         messageText = messageText.substring(0, messageText.indexOf("\n")) + "...";
                     }
-                    Label messageLabel = new Label(messageText);
-                    HBox hBox = new HBox(titleLabel, messageLabel);
-                    hBox.setSpacing(10);
+                    TextField messageTextField = new TextField(messageText);
+                    messageTextField.setEditable(false);
+                    messageTextField.getStylesheets().add("com/buzulukov/alliance/styles/transparentTextField.css");
+                    messageTextField.setPadding(new Insets(0, 0, 0, 0));
+                    Label fromLabel;
 
-                    Label accountLabel = new Label(item.getLibraryName());
-                    Label dateLabel = new Label(SHORT_DATE_FORMAT.format(item.getLastMessage().getDate()));
+                    if (item.getLastMessage().isOutgoing()) {
+                        fromLabel = new Label("You: ");
+                        fromLabel.setMinWidth(26);
+                        fromLabel.setMaxWidth(26);
+                    } else {
+                        fromLabel = new Label(""); // May be get user name?
+                    }
+                    HBox botHBox = new HBox(fromLabel, messageTextField);
+                    HBox.setHgrow(messageTextField, Priority.ALWAYS);
 
-                    StackPane stackPane = new StackPane(accountLabel, dateLabel);
-                    StackPane.setAlignment(accountLabel, Pos.CENTER_LEFT);
-                    StackPane.setAlignment(dateLabel, Pos.CENTER_RIGHT);
-
-                    VBox vBox = new VBox(hBox, stackPane);
-                    vBox.setPadding(INSETS);
+                    VBox rightVBox = new VBox(topHBox, botHBox);
+                    ImageView chatImage = new ImageView(new Image(
+                            item.getChatPhotoUri(),
+                            40, 40,
+                            true, true, true));
+                    Circle clip = new Circle(20, 20, 20);
+                    chatImage.setClip(clip);
+                    HBox chatCell = new HBox(chatImage, rightVBox);
+                    chatCell.setSpacing(10);
+                    HBox.setHgrow(rightVBox, Priority.ALWAYS);
+                    chatCell.setPadding(INSETS);
 
                     //TODO: setOnMouseClicked(event -> update right list cell with messages);
 
-                    setGraphic(vBox);
+                    setGraphic(chatCell);
                     prefWidthProperty().bind(getListView().prefWidthProperty().subtract(2));
                 }
             }
@@ -243,6 +280,21 @@ public class MainController {
     private void initializeChat() {
         Platform.runLater(this::enableTextAreaAutoResize);
         initializeChatSize();
+        initializeEmptyChat();
+    }
+
+    private void initializeEmptyChat() {
+        var pane = new BorderPane();
+        pane.setMinWidth(CHAT_PANE_MIN_WIDTH);
+        var label = new Label("Select chat to start messaging.");
+        var grey = new Background(new BackgroundFill(
+                MESSAGE_WRAPPER_COLOR,
+                new CornerRadii(15),
+                new Insets(-3)));
+        label.setWrapText(true);
+        label.setBackground(grey);
+        pane.setCenter(label);
+        Platform.runLater(() -> dialogsChatSplitPane.getItems().set(1, pane));
     }
 
     private void enableTextAreaAutoResize() {

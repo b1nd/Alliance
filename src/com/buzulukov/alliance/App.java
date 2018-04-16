@@ -16,7 +16,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         mainRoot = FXMLLoader.load(App.class.getResource("layouts/main.fxml"));
-        mainRoot.getStylesheets().addAll("com/buzulukov/alliance/styles/chat.css");
+        //mainRoot.getStylesheets().add("com/buzulukov/alliance/styles/chat.css");
         this.stage = stage;
         stage.setScene(new Scene(mainRoot));
         stage.show();
