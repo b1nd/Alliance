@@ -4,6 +4,9 @@ import com.buzulukov.alliance.App;
 import com.buzulukov.alliance.api.messengers.Chat;
 import com.buzulukov.alliance.api.messengers.Message;
 import com.buzulukov.alliance.controllers.selection_models.NoSelectionModel;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -26,7 +29,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 import java.text.SimpleDateFormat;
@@ -120,7 +122,14 @@ public class MainController {
     }
 
     public void onSettingsClicked(ActionEvent actionEvent) {
+        Timeline tl = new Timeline();
+        tl.setAutoReverse(true);
+        KeyValue kv = new KeyValue(App.settingsRoot.layoutXProperty(), 0);
+        KeyFrame kf = new KeyFrame(Duration.millis(150), kv);
+        tl.getKeyFrames().add(kf);
+        tl.play();
 
+        App.settingsStage.show();
     }
 
     public void onBackToDialogs(ActionEvent actionEvent) {
@@ -143,7 +152,7 @@ public class MainController {
                     emptyTextField.setAlignment(Pos.CENTER);
                     emptyTextField.setOpaqueInsets(new Insets(5));
                     emptyTextField.setBackground(new Background(new BackgroundFill(
-                            MESSAGE_WRAPPER_COLOR,
+                            ACTIVE_WRAPPER_COLOR,
                             new CornerRadii(15),
                             new Insets(0))));
                     StackPane stackPane = new StackPane(emptyTextField);
@@ -213,8 +222,9 @@ public class MainController {
 //                                         CHAT PANE                                             //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private static final Color MESSAGE_WRAPPER_COLOR = Color.web("33393f");
+    private static final Color ACTIVE_WRAPPER_COLOR = Color.web("009287");
     private static final double CHAT_PANE_MIN_WIDTH = 300;
-    private static final Color MESSAGE_WRAPPER_COLOR = Color.web("009287");
     private static final int TEXT_INPUT_MAX_NUMBER_OF_LINES = 20;
 
     @FXML
@@ -250,7 +260,7 @@ public class MainController {
         label.setMinWidth(250);
         label.setAlignment(Pos.CENTER);
         var grey = new Background(new BackgroundFill(
-                MESSAGE_WRAPPER_COLOR,
+                ACTIVE_WRAPPER_COLOR,
                 new CornerRadii(15),
                 new Insets(-3)));
         label.setWrapText(true);
@@ -287,7 +297,7 @@ public class MainController {
     static class MessageCell extends ListCell<Message> {
         private static final Insets INSETS = new Insets(10);
         private static final Background MESSAGE_BACKGROUND = new Background(new BackgroundFill(
-                MESSAGE_WRAPPER_COLOR,
+                ACTIVE_WRAPPER_COLOR,
                 new CornerRadii(4),
                 new Insets(-10)));
 

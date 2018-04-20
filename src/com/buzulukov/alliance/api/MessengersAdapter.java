@@ -86,8 +86,8 @@ public class MessengersAdapter {
     public boolean updateChats() {
         boolean updated = false;
 
-        for(var messenger : messengers.values()) {
-            if(messenger.updateChats()) {
+        for (var messenger : messengers.values()) {
+            if (messenger.updateChats()) {
                 updated = true;
             }
         }

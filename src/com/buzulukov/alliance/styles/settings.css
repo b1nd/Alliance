@@ -1,0 +1,38 @@
+.root {
+    -fx-background-color: transparent;
+}
+
+.container-settings {
+    -fx-background-color: #18191d;
+}
+
+.list-view-settings {
+    -fx-background-color: #18191d;
+}
+
+.list-cell {
+    -fx-background-color: #18191d;
+    -fx-opacity: 0.6;
+}
+
+.list-cell:hover {
+    -fx-opacity: 1;
+    -fx-background-color: #282e33;
+}
+
+.container-logo {
+    -fx-background-color: #009287;
+}
+
+.label-bold {
+    -fx-text-fill: #fafafa;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-font-family: Tahoma;
+}
+
+.label-message {
+    -fx-text-fill: #6e939e;
+    -fx-font-size: 12px;
+    -fx-font-family: Tahoma;
+}

@@ -4,8 +4,15 @@
 }
 
 .button-menu {
+    -fx-background-image: url("../resources/menu-button.png");
+    -fx-background-color: transparent;
+    -fx-opacity: 0.3;
+}
+
+.button-menu:hover {
     -fx-background-image: url("../resources/menu-button-focus.png");
     -fx-background-color: transparent;
+    -fx-opacity: 1;
 }
 
 .label-bold {

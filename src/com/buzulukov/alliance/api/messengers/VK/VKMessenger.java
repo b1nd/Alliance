@@ -133,7 +133,7 @@ public class VKMessenger implements Messenger, Serializable {
                 if (messageObject.has("chat_id")) {
                     chatId = messageObject.get("chat_id").getAsInt();
                     String photoUri;
-                    if(messageObject.has("photo_50")) {
+                    if (messageObject.has("photo_50")) {
                         photoUri = messageObject.get("photo_50").getAsString();
                     } else {
                         photoUri = "https://vk.com/images/camera_50.png";

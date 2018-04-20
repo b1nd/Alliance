@@ -1,11 +1,26 @@
+
 .button-send {
+    -fx-background-image: url("../resources/send-button.png");
+    -fx-background-color: transparent;
+    -fx-opacity: 0.3;
+}
+
+.button-send:hover {
     -fx-background-image: url("../resources/send-button-focus.png");
     -fx-background-color: transparent;
+    -fx-opacity: 1;
 }
 
 .button-back {
+    -fx-background-image: url("../resources/back-button.png");
+    -fx-background-color: transparent;
+    -fx-opacity: 0.3;
+}
+
+.button-back:hover {
     -fx-background-image: url("../resources/back-button-focus.png");
     -fx-background-color: transparent;
+    -fx-opacity: 1;
 }
 
 .list-view-chat {
