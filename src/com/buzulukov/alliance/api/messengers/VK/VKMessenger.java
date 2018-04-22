@@ -324,6 +324,7 @@ public class VKMessenger implements Messenger, Serializable {
                         accessToken = matcher.group(1);
                         userId = Integer.parseInt(matcher.group(2));
                         isAuthorized = true;
+                        java.net.CookieHandler.setDefault(new java.net.CookieManager());
 
                         stage.close();
                     }

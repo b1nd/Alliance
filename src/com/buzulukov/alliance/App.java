@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import java.io.IOException;
@@ -14,10 +15,12 @@ public class App extends Application {
 
     public static final MessengersAdapter MESSENGERS_ADAPTER = MessengersAdapter.getInstance();
 
+    public static Stage newAccountStage;
     public static Stage mainStage;
     public static Stage settingsStage;
     public static Parent mainRoot;
     public static Parent settingsRoot;
+    public static Parent newAccountRoot;
 
     @Override
     public void start(Stage mainStage) throws Exception {
@@ -57,5 +60,26 @@ public class App extends Application {
             settingsStage.setY(mainStage.getY());
             settingsStage.setX(mainStage.getX() + 7);
         });
+    }
+
+    public static void showNewAccountWindow() {
+        if (newAccountStage == null) {
+            try {
+                newAccountRoot = FXMLLoader.load(App.class.getResource("layouts/newAccount.fxml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            newAccountStage = new Stage();
+            newAccountStage.setWidth(245);
+            newAccountStage.setHeight(130);
+            newAccountStage.setResizable(false);
+            newAccountStage.setScene(new Scene(newAccountRoot));
+            newAccountStage.initModality(Modality.WINDOW_MODAL);
+            newAccountStage.initOwner(mainStage);
+            newAccountStage.initStyle(StageStyle.TRANSPARENT);
+        }
+        newAccountStage.setX(mainStage.getX() + (mainStage.getWidth() - newAccountStage.getWidth()) / 2);
+        newAccountStage.setY(mainStage.getY() + (mainStage.getHeight() - newAccountStage.getHeight()) / 2);
+        newAccountStage.show();
     }
 }

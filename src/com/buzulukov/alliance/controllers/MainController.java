@@ -46,6 +46,16 @@ public class MainController {
     @FXML
     public Button settingsButton;
 
+    private static MainController mainController;
+
+    public MainController() {
+        mainController = this;
+    }
+
+    static MainController getInstance() {
+        return mainController;
+    }
+
     public void initialize() {
         initializeChat();
         initializeDialogs();
@@ -87,7 +97,7 @@ public class MainController {
         }
     };
 
-    private void updateDialogsScreen(String... messengerNames) {
+    void updateDialogsScreen(String... messengerNames) {
         ObservableList<Chat> items = FXCollections.observableArrayList();
 
         items.addAll(App.MESSENGERS_ADAPTER.getChats(messengerNames));
@@ -162,16 +172,20 @@ public class MainController {
                     setGraphic(stackPane);
                 } else {
                     Label titleLabel = new Label(item.getTitle());
-                    titleLabel.setFont(Font.font(
-                            Font.getDefault().getFamily(),
-                            FontWeight.BOLD,
-                            Font.getDefault().getSize()));
-                    Label dateLabel = new Label(HOURS_MINS.format(item.getLastMessage().getDate()) +
-                            " " + item.getLibraryName());
-                    dateLabel.setMinWidth(50);
+                    titleLabel.getStyleClass().add("label-bold");
+                    titleLabel.setPadding(new Insets(2, 0, 0, 0));
+                    Label dateLabel = new Label(" " + HOURS_MINS.format(item.getLastMessage().getDate()));
+                    dateLabel.setMinWidth(35);
+                    dateLabel.setPadding(new Insets(2, 0, 0, 0));
+                    dateLabel.getStyleClass().add("label-message");
+                    Label libraryNameLabel = new Label(item.getLibraryName());
+                    libraryNameLabel.setMinWidth(0);
+                    libraryNameLabel.setTextOverrun(OverrunStyle.CLIP);
+                    libraryNameLabel.setPadding(new Insets(2, 0, 0, 0));
+                    libraryNameLabel.getStyleClass().add("label-message");
 
                     Pane justSpace = new Pane();
-                    HBox topHBox = new HBox(titleLabel, justSpace, dateLabel);
+                    HBox topHBox = new HBox(titleLabel, justSpace, libraryNameLabel, dateLabel);
                     HBox.setHgrow(justSpace, Priority.ALWAYS);
 
                     String messageText = item.getLastMessage().getText();
@@ -181,18 +195,20 @@ public class MainController {
                     }
                     TextField messageTextField = new TextField(messageText);
                     messageTextField.setEditable(false);
-                    messageTextField.getStyleClass().setAll("text-field-transparent");
-                    messageTextField.setPadding(new Insets(0, 0, 0, 0));
+                    messageTextField.getStyleClass().setAll("text-field-message");
+                    messageTextField.setPadding(new Insets(4, 0, 0, 0));
 
                     Label fromLabel;
 
                     if (item.getLastMessage().isOutgoing()) {
-                        fromLabel = new Label("You: ");
-                        fromLabel.setMinWidth(26);
-                        fromLabel.setMaxWidth(26);
+                        fromLabel = new Label("You:");
+                        fromLabel.setMinWidth(28);
+                        fromLabel.setMaxWidth(28);
                     } else {
                         fromLabel = new Label(""); // May be get user name?
                     }
+                    fromLabel.setPadding(new Insets(4, 0, 0, 0));
+                    fromLabel.getStyleClass().add("label-from");
                     HBox botHBox = new HBox(fromLabel, messageTextField);
                     HBox.setHgrow(messageTextField, Priority.ALWAYS);
 
@@ -200,7 +216,7 @@ public class MainController {
                     ImageView chatImage = new ImageView(new Image(
                             item.getChatPhotoUri(),
                             40, 40,
-                            true, true, true));
+                            true, true, false));
                     Circle clip = new Circle(20, 20, 20);
                     chatImage.setClip(clip);
                     HBox chatCell = new HBox(chatImage, rightVBox);
@@ -249,7 +265,7 @@ public class MainController {
     private void initializeChat() {
         Platform.runLater(this::enableTextAreaAutoResize);
         initializeChatSize();
-        initializeEmptyChat();
+        //initializeEmptyChat();
     }
 
     private void initializeEmptyChat() {

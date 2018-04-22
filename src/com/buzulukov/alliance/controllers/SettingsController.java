@@ -1,6 +1,7 @@
 package com.buzulukov.alliance.controllers;
 
 
+import com.buzulukov.alliance.App;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -48,7 +49,7 @@ public class SettingsController {
         HBox.setMargin(newAccountLabel, labelInsets);
         newAccountHBox.setSpacing(20);
         newAccountHBox.setPadding(hBoxInsets);
-        newAccountHBox.setOnMouseClicked(event -> System.out.println(newAccountHBox.getHeight()));
+        newAccountHBox.setOnMouseClicked(event -> App.showNewAccountWindow());
 
         ObservableList<HBox> items = FXCollections.observableArrayList();
         items.addAll(newAccountHBox);
