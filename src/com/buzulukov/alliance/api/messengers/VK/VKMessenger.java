@@ -6,34 +6,19 @@ import com.buzulukov.alliance.web.utils.WebUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import javafx.scene.Scene;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class VKMessenger implements Messenger, Serializable {
 
     public static final String LIBRARY_NAME = "VK";
 
+    public static final String METHOD_URI = "https://api.vk.com/method/";
     private static final String API_VERSION = "5.71";
-
-    private static final String REDIRECT_URI = "https://oauth.vk.com/blank.html";
-    private static final String METHOD_URI = "https://api.vk.com/method/";
-    private static final int CLIENT_ID = 6447450;
-    private static final String[] ACCESS_SCOPES = {
-            "offline",
-            "messages"
-    };
-    private static final Pattern LOGIN_PATTERN = Pattern.compile(
-            "https://oauth.vk.com/blank.html#access_token=([0-9a-z]+)&expires_in=[0-9]+&user_id=([0-9]+)");
 
     private String accessToken;
     private String accountInfo;
@@ -42,13 +27,10 @@ public class VKMessenger implements Messenger, Serializable {
 
     private LinkedList<Chat> chats;
 
-    private Random random;
-
     private JsonParser jsonParser;
 
     public VKMessenger() {
         jsonParser = new JsonParser();
-        random = new Random();
     }
 
     @Override
@@ -57,16 +39,13 @@ public class VKMessenger implements Messenger, Serializable {
     }
 
     @Override
-    public void login(String loginType) {
-        var chooseLogin = new VKLoginFacade();
-
-        if (loginType == null) {
-            throw new NullPointerException("Login type can't be null");
-        } else if (loginType.equalsIgnoreCase("desktop")) {
-            chooseLogin.loginJavafx();
-        } else {
-            throw new IllegalArgumentException("No supported loginType");
+    public boolean login(String... params) {
+        if (params.length == 2) {
+            accessToken = params[0];
+            userId = Integer.parseInt(params[1]);
+            isAuthorized = true;
         }
+        return isAuthorized;
     }
 
     @Override
@@ -284,52 +263,5 @@ public class VKMessenger implements Messenger, Serializable {
 
     private JsonArray getJsonArrayFromResponse(String response) {
         return jsonParser.parse(response).getAsJsonObject().get("response").getAsJsonArray();
-    }
-
-    private class VKLoginFacade {
-        private String url;
-
-        VKLoginFacade() {
-            StringBuilder scopes = new StringBuilder();
-            for (int i = 0; i < ACCESS_SCOPES.length - 1; ++i) {
-                scopes.append(ACCESS_SCOPES[i]).append(",");
-            }
-            scopes.append(ACCESS_SCOPES[ACCESS_SCOPES.length - 1]);
-
-            url = WebUtils.getUrl("https://oauth.vk.com/authorize",
-                    "client_id=" + CLIENT_ID,
-                    "display=page",
-                    "redirect_uri=" + REDIRECT_URI,
-                    "scope=" + scopes,
-                    "response_type=token",
-                    "v=" + API_VERSION);
-        }
-
-        void loginJavafx() {
-            Stage stage = new Stage();
-            stage.setWidth(672);
-            stage.setHeight(388);
-
-            WebView webView = new WebView();
-            stage.setScene(new Scene(webView));
-            stage.show();
-
-            WebEngine webEngine = webView.getEngine();
-            webEngine.load(url);
-            webEngine.locationProperty().addListener((observable, oldLocation, newLocation) -> {
-                if (newLocation.contains(REDIRECT_URI)) {
-                    Matcher matcher = LOGIN_PATTERN.matcher(newLocation);
-
-                    if (matcher.matches()) {
-                        accessToken = matcher.group(1);
-                        userId = Integer.parseInt(matcher.group(2));
-                        isAuthorized = true;
-                        java.net.CookieHandler.setDefault(new java.net.CookieManager());
-
-                        stage.close();
-                    }
-                }
-            });
-        }
     }
 }

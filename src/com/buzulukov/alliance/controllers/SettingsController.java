@@ -1,6 +1,5 @@
 package com.buzulukov.alliance.controllers;
 
-
 import com.buzulukov.alliance.App;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

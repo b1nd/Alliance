@@ -15,8 +15,8 @@ public class SlackMessenger implements Messenger {
     }
 
     @Override
-    public void login(String loginType) {
-
+    public boolean login(String... params) {
+        return false;
     }
 
     @Override

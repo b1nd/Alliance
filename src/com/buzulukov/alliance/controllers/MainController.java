@@ -26,8 +26,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -196,7 +194,7 @@ public class MainController {
                     TextField messageTextField = new TextField(messageText);
                     messageTextField.setEditable(false);
                     messageTextField.getStyleClass().setAll("text-field-message");
-                    messageTextField.setPadding(new Insets(4, 0, 0, 0));
+                    messageTextField.setPadding(new Insets(5, 0, 0, 0));
 
                     Label fromLabel;
 
@@ -207,7 +205,7 @@ public class MainController {
                     } else {
                         fromLabel = new Label(""); // May be get user name?
                     }
-                    fromLabel.setPadding(new Insets(4, 0, 0, 0));
+                    fromLabel.setPadding(new Insets(5, 0, 0, 0));
                     fromLabel.getStyleClass().add("label-from");
                     HBox botHBox = new HBox(fromLabel, messageTextField);
                     HBox.setHgrow(messageTextField, Priority.ALWAYS);
