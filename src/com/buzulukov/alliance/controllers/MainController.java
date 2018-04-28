@@ -15,14 +15,12 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -88,6 +86,7 @@ public class MainController {
 
                     if (updated) {
                         Platform.runLater(MainController.this::updateDialogsScreen);
+                        Platform.runLater(MainController.this::updateChatScreen);
                     }
                     return updated;
                 }
@@ -141,11 +140,12 @@ public class MainController {
     }
 
     public void onBackToDialogs(ActionEvent actionEvent) {
-
+        chat = null;
+        initializeEmptyChat();
     }
 
-    static class ChatCell extends ListCell<Chat> {
-        private static final Insets INSETS = new Insets(5);
+    class ChatCell extends ListCell<Chat> {
+        private final Insets INSETS = new Insets(5);
 
         @Override
         protected void updateItem(Chat item, boolean empty) {
@@ -222,7 +222,7 @@ public class MainController {
                     HBox.setHgrow(rightVBox, Priority.ALWAYS);
                     chatCell.setPadding(INSETS);
 
-                    //TODO: setOnMouseClicked(event -> update right list cell with messages);
+                    setOnMouseClicked(event -> initializeChatScreen(item));
 
                     setGraphic(chatCell);
                     prefWidthProperty().bind(getListView().prefWidthProperty().subtract(2));
@@ -252,7 +252,7 @@ public class MainController {
     @FXML
     public Label accountLabel;
     @FXML
-    public ListView chatListView;
+    public ListView<Message> chatListView;
     @FXML
     public TextArea sendMessageTextArea;
     @FXML
@@ -263,7 +263,43 @@ public class MainController {
     private void initializeChat() {
         Platform.runLater(this::enableTextAreaAutoResize);
         initializeChatSize();
-        //initializeEmptyChat();
+        initializeEmptyChat();
+        initializeChatListView();
+    }
+
+    private void initializeChatListView() {
+        chatListView.setSelectionModel(new NoSelectionModel<>());
+        chatListView.setCellFactory(param -> new MessageCell());
+
+        ObservableList<Message> items = FXCollections.observableArrayList();
+        items.add(Message.EMPTY);
+        chatListView.setItems(items);
+    }
+
+    private void updateChatScreen() {
+        if(chat != null) {
+            ObservableList<Message> items = chatListView.getItems();
+            if(items.get(items.size() - 1) != chat.getLastMessage()) {
+                items.add(chat.getLastMessage());
+            }
+        }
+    }
+
+    private void initializeChatScreen(Chat selectedChat) {
+        chat = selectedChat;
+        chatTitleLabel.setText(chat.getTitle());
+        lastActivityLabel.setText(SHORT_DATE_FORMAT.format(chat.getLastMessage().getDate()));
+        accountLabel.setText(chat.getLibraryName());
+
+        ObservableList<Message> items = FXCollections.observableArrayList();
+        items.addAll(chat.getMessages());
+
+        if(items.isEmpty()) {
+            items.add(Message.EMPTY);
+        }
+        chatListView.setItems(items);
+        chatListView.scrollTo(chat.getLastMessage());
+        Platform.runLater(() -> dialogsChatSplitPane.getItems().set(1, chatGridPane));
     }
 
     private void initializeEmptyChat() {
@@ -305,13 +341,14 @@ public class MainController {
     }
 
     public void onSendClicked(ActionEvent actionEvent) {
-
+        Platform.runLater(() -> chat.sendMessage(sendMessageTextArea.getText()));
+        Platform.runLater(sendMessageTextArea::clear);
     }
 
     static class MessageCell extends ListCell<Message> {
         private static final Insets INSETS = new Insets(10);
         private static final Background MESSAGE_BACKGROUND = new Background(new BackgroundFill(
-                ACTIVE_WRAPPER_COLOR,
+                MESSAGE_WRAPPER_COLOR,
                 new CornerRadii(4),
                 new Insets(-10)));
 
@@ -339,19 +376,15 @@ public class MainController {
             } else {
                 if (item == Message.EMPTY) {
                     Label label = new Label("Messages will be shown here.");
+                    label.setStyle("");
                     setGraphic(label);
                 } else {
                     Label messageLabel = new Label(item.getText());
-                    messageLabel.setWrapText(true);
+                    messageLabel.getStyleClass().add("label-chat-message");
                     messageLabel.setBackground(MESSAGE_BACKGROUND);
 
                     Label dateLabel = new Label(SHORT_DATE_FORMAT.format(item.getDate()));
-                    dateLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            System.out.println("Date label width = " + dateLabel.getWidth());
-                        }
-                    });
+                    dateLabel.getStyleClass().add("label-date");
                     dateLabel.setMinWidth(78);
 
                     HBox hBox;

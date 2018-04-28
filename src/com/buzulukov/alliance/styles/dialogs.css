@@ -64,6 +64,10 @@
     -fx-background-color: #282e33;
 }
 
+.list-view-dialogs .list-cell:hover {
+    -fx-background-color: #33393f;
+}
+
 .list-view-dialogs .scroll-bar:vertical .track {
     -fx-background-color: transparent;
     -fx-border-color: transparent;

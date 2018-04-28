@@ -23,8 +23,53 @@
     -fx-opacity: 1;
 }
 
+.text-field-chat-message {
+    -fx-text-fill: #fafafa;
+    -fx-font-size: 12px;
+    -fx-font-family: Tahoma;
+    -fx-highlight-text-fill: #fafafa;
+    -fx-prompt-text-fill: #6e939e;
+    -fx-highlight-fill: #009287;
+}
+
+.label-chat-message {
+    -fx-text-fill: #fafafa;
+    -fx-font-size: 12px;
+    -fx-font-family: Tahoma;
+}
+
+.label-date {
+    -fx-text-fill: #6e939e;
+    -fx-font-size: 12px;
+    -fx-font-family: Tahoma;
+}
+
 .list-view-chat {
     -fx-background-color: #18191d;
+}
+
+.list-view-chat .list-cell {
+    -fx-background-color: #18191d;
+}
+
+.list-view-chat .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.list-view-chat .scroll-bar {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.list-view-chat .scroll-bar:vertical .thumb {
+    -fx-background-color: #3d444b;
+    -fx-background-radius: 5em;
+}
+
+.list-view-chat .increment-button, .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
 }
 
 .text-area-send {

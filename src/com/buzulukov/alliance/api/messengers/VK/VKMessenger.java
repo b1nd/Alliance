@@ -18,16 +18,16 @@ public class VKMessenger implements Messenger, Serializable {
     public static final String LIBRARY_NAME = "VK";
 
     public static final String METHOD_URI = "https://api.vk.com/method/";
-    private static final String API_VERSION = "5.71";
+    public static final String API_VERSION = "5.71";
 
     private String accessToken;
     private String accountInfo;
     private int userId;
     private boolean isAuthorized;
 
-    private LinkedList<Chat> chats;
+    private transient LinkedList<Chat> chats;
 
-    private JsonParser jsonParser;
+    private transient JsonParser jsonParser;
 
     public VKMessenger() {
         jsonParser = new JsonParser();
@@ -97,7 +97,7 @@ public class VKMessenger implements Messenger, Serializable {
                     var responseGroupObject = getJsonArrayFromResponse(response).get(0).getAsJsonObject();
                     var photoUri = responseGroupObject.get("photo_50").getAsString();
                     var chatTitle = responseGroupObject.get("name").getAsString();
-                    var chat = new VKChat(photoUri, chatTitle, messageObject.get("user_id").getAsInt());
+                    var chat = new VKChat(accessToken, photoUri, chatTitle, messageObject.get("user_id").getAsInt());
                     VKMessage message = createMessageFromJsonObject(messageObject);
                     chat.getMessages().addLast(message);
                     chats.addLast(chat);
@@ -117,13 +117,13 @@ public class VKMessenger implements Messenger, Serializable {
                     } else {
                         photoUri = "https://vk.com/images/camera_50.png";
                     }
-                    chat = new VKChat(photoUri, chatTitle, chatId);
+                    chat = new VKChat(accessToken, photoUri, chatTitle, chatId);
                 } else {
                     if (userIds.length() != 0) {
                         userIds.append(",");
                     }
                     userIds.append(messageObject.get("user_id").getAsString());
-                    chat = new VKChat(chatTitle, chatId);
+                    chat = new VKChat(accessToken, chatTitle, chatId);
                 }
                 chat.messages.addLast(message);
                 chats.addLast(chat);
@@ -182,7 +182,7 @@ public class VKMessenger implements Messenger, Serializable {
             var responseGroupObject = getJsonArrayFromResponse(response).get(0).getAsJsonObject();
             var imageUri = responseGroupObject.get("photo_50").getAsString();
             var chatTitle = responseGroupObject.get("name").getAsString();
-            var chat = new VKChat(imageUri, chatTitle, messageObject.get("user_id").getAsInt());
+            var chat = new VKChat(accessToken, imageUri, chatTitle, messageObject.get("user_id").getAsInt());
             VKMessage message = createMessageFromJsonObject(messageObject);
             chat.getMessages().addLast(message);
             chats.addLast(chat);
@@ -210,10 +210,10 @@ public class VKMessenger implements Messenger, Serializable {
             var photoUri = userObject.get("photo_50").getAsString();
             var firstName = userObject.get("first_name").getAsString();
             var lastName = userObject.get("last_name").getAsString();
-            chat = new VKChat(photoUri, firstName + " " + lastName, chatId);
+            chat = new VKChat(accessToken, photoUri, firstName + " " + lastName, chatId);
         } else {
             var photoUri = messageObject.get("photo_50").getAsString();
-            chat = new VKChat(photoUri, chatTitle, chatId);
+            chat = new VKChat(accessToken, photoUri, chatTitle, chatId);
         }
         VKMessage message = createMessageFromJsonObject(messageObject);
         chat.getMessages().addLast(message);
@@ -237,7 +237,7 @@ public class VKMessenger implements Messenger, Serializable {
         return true;
     }
 
-    private VKMessage createMessageFromJsonObject(JsonObject messageObject) {
+     static VKMessage createMessageFromJsonObject(JsonObject messageObject) {
         String messageText = messageObject.get("body").getAsString();
 
         if (messageText.isEmpty()) {
@@ -257,11 +257,11 @@ public class VKMessenger implements Messenger, Serializable {
         return new VKMessage(messageText, messageDate, messageId, messageUserId, messageOutgoing);
     }
 
-    private JsonObject getJsonObjectFromResponse(String response) {
-        return jsonParser.parse(response).getAsJsonObject().get("response").getAsJsonObject();
+    static JsonObject getJsonObjectFromResponse(String response) {
+        return new JsonParser().parse(response).getAsJsonObject().get("response").getAsJsonObject();
     }
 
-    private JsonArray getJsonArrayFromResponse(String response) {
-        return jsonParser.parse(response).getAsJsonObject().get("response").getAsJsonArray();
+    static JsonArray getJsonArrayFromResponse(String response) {
+        return new JsonParser().parse(response).getAsJsonObject().get("response").getAsJsonArray();
     }
 }
