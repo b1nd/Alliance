@@ -72,6 +72,25 @@
     -fx-border-color: transparent;
 }
 
+.text-area-message {
+    -fx-background-color: #33393f;
+    -fx-highlight-fill: #009287;
+    -fx-text-fill: #fafafa;
+    -fx-highlight-text-fill: #fafafa;
+    -fx-font-size: 13px;
+    -fx-font-family: Tahoma;
+}
+
+.text-area-message .content {
+    -fx-background-color: #33393f;
+    -fx-border-color: #33393f;
+}
+
+.text-area-message .scroll-pane {
+    -fx-vbar-policy: never;
+    -fx-hbar-policy: never;
+}
+
 .text-area-send {
     -fx-background-color: #282e33;
     -fx-highlight-fill: #009287;

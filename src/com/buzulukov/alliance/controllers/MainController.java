@@ -18,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -277,9 +278,9 @@ public class MainController {
     }
 
     private void updateChatScreen() {
-        if(chat != null) {
+        if (chat != null) {
             ObservableList<Message> items = chatListView.getItems();
-            if(items.get(items.size() - 1) != chat.getLastMessage()) {
+            if (items.get(items.size() - 1) != chat.getLastMessage()) {
                 items.add(chat.getLastMessage());
             }
         }
@@ -294,7 +295,7 @@ public class MainController {
         ObservableList<Message> items = FXCollections.observableArrayList();
         items.addAll(chat.getMessages());
 
-        if(items.isEmpty()) {
+        if (items.isEmpty()) {
             items.add(Message.EMPTY);
         }
         chatListView.setItems(items);
@@ -346,11 +347,7 @@ public class MainController {
     }
 
     static class MessageCell extends ListCell<Message> {
-        private static final Insets INSETS = new Insets(10);
-        private static final Background MESSAGE_BACKGROUND = new Background(new BackgroundFill(
-                MESSAGE_WRAPPER_COLOR,
-                new CornerRadii(4),
-                new Insets(-10)));
+        private static final Insets INSETS = new Insets(2);
 
         ChangeListener<Number> scrollListener = (observable, oldValue, newValue) -> {
             if (newValue.intValue() == 0 && !chat.areAllMessagesLoaded()) {
@@ -367,6 +364,34 @@ public class MainController {
             }
         };
 
+        void initMessageTextArea(TextArea textArea) {
+            try {
+                Text text = (Text) textArea.lookup(".text");
+                textArea.minHeightProperty().bind(Bindings.createDoubleBinding(new Callable<>() {
+                    private double maxHeight = text.getBoundsInLocal().getHeight() * TEXT_INPUT_MAX_NUMBER_OF_LINES;
+
+                    @Override
+                    public Double call() {
+                        if (text.getBoundsInLocal().getHeight() < maxHeight) {
+                            return text.getBoundsInLocal().getHeight();
+                        } else {
+                            return maxHeight;
+                        }
+                    }
+                }, text.boundsInLocalProperty()).add(15));
+
+                // Anti blur.
+                textArea.setCache(false);
+                ScrollPane sp = (ScrollPane) textArea.getChildrenUnmodifiable().get(0);
+                sp.setCache(false);
+                for (Node n : sp.getChildrenUnmodifiable()) {
+                    n.setCache(false);
+                }
+            } catch (Exception e) {
+                // TODO: idk why but sometimes text throws NullPointerException. Fix it!!!
+            }
+        }
+
         @Override
         protected void updateItem(Message item, boolean empty) {
             super.updateItem(item, empty);
@@ -375,17 +400,27 @@ public class MainController {
                 setGraphic(null);
             } else {
                 if (item == Message.EMPTY) {
-                    Label label = new Label("Messages will be shown here.");
+                    Label label = new Label("You have no messages.");
                     label.setStyle("");
                     setGraphic(label);
                 } else {
-                    Label messageLabel = new Label(item.getText());
-                    messageLabel.getStyleClass().add("label-chat-message");
-                    messageLabel.setBackground(MESSAGE_BACKGROUND);
+                    TextArea messageLabel = new TextArea();
+                    messageLabel.setPrefRowCount(0);
+                    messageLabel.setMinWidth(50);
+                    messageLabel.setPrefWidth(50);
+                    messageLabel.textProperty().addListener((observable, oldValue, newValue) ->
+                            messageLabel.setPrefWidth(messageLabel.getText().length() * 7 + 25));
+                    messageLabel.setText(item.getText());
+                    messageLabel.getStyleClass().add("text-area-message");
+                    messageLabel.setCache(false);
+                    Platform.runLater(() -> initMessageTextArea(messageLabel));
+                    messageLabel.setEditable(false);
+                    messageLabel.setWrapText(true);
 
                     Label dateLabel = new Label(SHORT_DATE_FORMAT.format(item.getDate()));
                     dateLabel.getStyleClass().add("label-date");
-                    dateLabel.setMinWidth(78);
+                    dateLabel.setMinWidth(35);
+                    dateLabel.setTextOverrun(OverrunStyle.CLIP);
 
                     HBox hBox;
 
