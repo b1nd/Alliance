@@ -1,7 +1,9 @@
 package com.buzulukov.alliance;
 
 import com.buzulukov.alliance.api.MessengersAdapter;
+import com.buzulukov.alliance.controllers.MainController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -35,7 +37,26 @@ public class App extends Application {
 
         initializeSettings();
 
+        loadAccounts("accounts.data");
+
+        mainStage.setOnCloseRequest(event -> {
+            try {
+                MESSENGERS_ADAPTER.saveAccounts("accounts.data");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
         mainStage.show();
+    }
+
+    private void loadAccounts(String path) throws ClassNotFoundException {
+        try {
+            MESSENGERS_ADAPTER.loadAccounts(path);
+            Platform.runLater(() -> MainController.getInstance().updateDialogsScreen());
+        } catch (IOException e) {
+            System.out.println("No saved accounts found");
+        }
     }
 
     private void initializeSettings() throws IOException {

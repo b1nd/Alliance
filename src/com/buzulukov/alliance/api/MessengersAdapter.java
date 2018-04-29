@@ -3,6 +3,7 @@ package com.buzulukov.alliance.api;
 import com.buzulukov.alliance.api.messengers.Chat;
 import com.buzulukov.alliance.api.messengers.Messenger;
 
+import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -84,16 +85,28 @@ public class MessengersAdapter {
         return updated;
     }
 
-    public boolean saveAccounts(String path) {
-        boolean updated = false;
-        // TODO: Serialize hash_map
-        return updated;
+    public boolean saveAccounts(String path) throws IOException {
+        var nFile = new File(path);
+        var isNewFile = nFile.createNewFile();
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(nFile))) {
+            oos.writeObject(messengers);
+        }
+        return isNewFile;
     }
 
-    public boolean loadAccounts(String path) {
-        boolean updated = false;
-        // TODO: Deserialize hash_map
-        return updated;
+    public boolean loadAccounts(String path) throws IOException, ClassNotFoundException {
+        boolean loaded = false;
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path))) {
+            Object ob = ois.readObject();
+
+            if(ob instanceof HashMap) {
+                messengers = (HashMap<String, Messenger>) ob;
+                loaded = true;
+            }
+        }
+        return loaded;
     }
 
     public boolean logout(String accountName) {

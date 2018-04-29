@@ -48,7 +48,7 @@ public class MainController {
         mainController = this;
     }
 
-    static MainController getInstance() {
+    public static MainController getInstance() {
         return mainController;
     }
 
@@ -94,7 +94,7 @@ public class MainController {
         }
     };
 
-    void updateDialogsScreen(String... messengerNames) {
+    public void updateDialogsScreen(String... messengerNames) {
         ObservableList<Chat> items = FXCollections.observableArrayList();
 
         items.addAll(App.MESSENGERS_ADAPTER.getChats(messengerNames));
