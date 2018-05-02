@@ -18,8 +18,6 @@ public interface Chat extends Comparable<Chat> {
 
     boolean areAllMessagesLoaded();
 
-    boolean update();
-
     void loadMessages();
 
     void unloadMessages();
@@ -60,11 +58,6 @@ public interface Chat extends Comparable<Chat> {
 
         @Override
         public boolean areAllMessagesLoaded() {
-            return false;
-        }
-
-        @Override
-        public boolean update() {
             return false;
         }
 

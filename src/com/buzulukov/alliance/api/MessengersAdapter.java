@@ -63,6 +63,7 @@ public class MessengersAdapter {
 
         if (messenger.login(params)) {
             if (messenger.isAuthorized()) {
+                System.out.println("Here");
                 String accountName = messenger.getName() + " " + messenger.getAccountInfo();
 
                 if (!messengers.containsKey(accountName)) {

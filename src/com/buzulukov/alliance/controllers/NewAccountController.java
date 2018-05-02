@@ -1,8 +1,13 @@
 package com.buzulukov.alliance.controllers;
 
 import com.buzulukov.alliance.App;
+import com.buzulukov.alliance.api.messengers.Slack.SlackMessenger;
 import com.buzulukov.alliance.web.utils.WebUtils;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,6 +18,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +39,8 @@ public class NewAccountController {
 
         if (accChoiceComboBox.getValue().equals(App.MESSENGERS_ADAPTER.getMessengerNames()[0])) {
             loginFacade.loginVK();
+        } else if(accChoiceComboBox.getValue().equals(App.MESSENGERS_ADAPTER.getMessengerNames()[1])) {
+            loginFacade.loginSlack();
         }
     }
 
@@ -89,6 +97,78 @@ public class NewAccountController {
                     if (matcher.matches()) {
                         String accessToken = matcher.group(1);
                         String userId = matcher.group(2);
+
+                        if (App.MESSENGERS_ADAPTER.authorize(accChoiceComboBox.getValue(), accessToken, userId)) {
+                            java.net.CookieHandler.setDefault(new java.net.CookieManager());
+                            stage.close();
+                        }
+                    }
+                }
+            });
+        }
+
+        void loginSlack() {
+            final String clientID = "323630498438.322130661072";
+            final String clientSecret = "3e4839a8e9cb7b4bee4509871dcc8b36";
+            final String[] accessScopes = {
+                    "channels:history",
+                    "channels:read",
+                    "channels:write",
+                    "chat:write:bot",
+                    "chat:write:user",
+                    "files:read",
+                    "groups:history",
+                    "groups:read",
+                    "groups:write",
+                    "im:history",
+                    "im:read",
+                    "im:write",
+                    "users:read"
+            };
+            //String redirectUri = "https://slack.com";
+            StringBuilder permissions = new StringBuilder();
+            Arrays.stream(accessScopes).forEach(s -> permissions.append(s).append(","));
+            String url = "https://slack.com/oauth/authorize?" +
+                    "client_id=" + clientID +
+                    "&scope=" + permissions + "users:read.email";
+            //"&redirect_uri=" + redirectUri;
+
+            Stage stage = new Stage();
+            stage.setTitle("Authorization");
+            stage.setMinWidth(650);
+            stage.setMinHeight(600);
+            stage.setWidth(650);
+            stage.setHeight(600);
+
+            WebView webView = new WebView();
+            stage.setScene(new Scene(webView));
+            stage.show();
+
+            WebEngine webEngine = webView.getEngine();
+            webEngine.load(url);
+            webEngine.locationProperty().addListener(new ChangeListener<String>() {
+                Pattern pattern = Pattern.compile("https://slack\\.com/\\?code=([0-9a-z]+\\.[0-9a-z]+\\.[0-9a-z]+)&state=");
+
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldLocation, String newLocation) {
+                    Matcher matcher = pattern.matcher(newLocation);
+                    if (matcher.matches()) {
+                        String code = matcher.group(1);
+
+                        String response;
+                        JsonObject responseObject;
+
+                        response = WebUtils.getResponse(SlackMessenger.METHOD_URI + "oauth.access",
+                                "client_id=" + clientID,
+                                "client_secret=" + clientSecret,
+                                "code=" + code);
+                        responseObject = new JsonParser().parse(response).getAsJsonObject();
+                        final String accessToken = responseObject.get("access_token").getAsString();
+
+                        response = WebUtils.getResponse(SlackMessenger.METHOD_URI + "auth.test",
+                                "token=" + accessToken);
+                        responseObject = new JsonParser().parse(response).getAsJsonObject();
+                        final String userId = responseObject.get("user_id").getAsString();
 
                         if (App.MESSENGERS_ADAPTER.authorize(accChoiceComboBox.getValue(), accessToken, userId)) {
                             java.net.CookieHandler.setDefault(new java.net.CookieManager());

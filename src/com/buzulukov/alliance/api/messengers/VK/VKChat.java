@@ -74,11 +74,6 @@ public class VKChat implements Chat {
     }
 
     @Override
-    public boolean update() {
-        return false;
-    }
-
-    @Override
     public void loadMessages() {
         VKMessage firstMessage = (VKMessage) messages.getFirst();
         int peerId;
@@ -129,6 +124,7 @@ public class VKChat implements Chat {
             peerId = ((VKMessage) getLastMessage()).userId;
         }
         String encodedText = null;
+
         try {
             encodedText = URLEncoder.encode(text, "UTF-8");
         } catch (UnsupportedEncodingException e) {

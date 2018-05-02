@@ -27,10 +27,7 @@ public class VKMessenger implements Messenger, Serializable {
 
     private transient LinkedList<Chat> chats;
 
-    private transient JsonParser jsonParser;
-
     public VKMessenger() {
-        jsonParser = new JsonParser();
     }
 
     @Override
@@ -40,7 +37,7 @@ public class VKMessenger implements Messenger, Serializable {
 
     @Override
     public boolean login(String... params) {
-        if (params.length == 2) {
+        if (!isAuthorized && params.length == 2) {
             accessToken = params[0];
             userId = Integer.parseInt(params[1]);
             isAuthorized = true;
@@ -64,7 +61,7 @@ public class VKMessenger implements Messenger, Serializable {
             var response = WebUtils.getResponse(METHOD_URI + "account.getProfileInfo",
                     "access_token=" + accessToken,
                     "v=" + API_VERSION);
-            var responseObject = jsonParser.parse(response).getAsJsonObject().get("response").getAsJsonObject();
+            var responseObject = new JsonParser().parse(response).getAsJsonObject().get("response").getAsJsonObject();
             accountInfo = responseObject.get("first_name").getAsString() + " " +
                     responseObject.get("last_name").getAsString();
         }
@@ -186,6 +183,7 @@ public class VKMessenger implements Messenger, Serializable {
             VKMessage message = createMessageFromJsonObject(messageObject);
             chat.getMessages().addLast(message);
             chats.addLast(chat);
+
             return true;
         }
         var chatTitle = messageObject.get("title").getAsString();
