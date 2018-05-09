@@ -15,6 +15,18 @@
     -fx-opacity: 1;
 }
 
+.button-search {
+    -fx-background-image: url("../resources/search-button.png");
+    -fx-background-color: transparent;
+    -fx-opacity: 0.3;
+}
+
+.button-search:hover {
+    -fx-background-image: url("../resources/search-button-focus.png");
+    -fx-background-color: transparent;
+    -fx-opacity: 1;
+}
+
 .label-bold {
     -fx-text-fill: #fafafa;
     -fx-font-size: 12px;

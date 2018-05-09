@@ -29,6 +29,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.concurrent.Callable;
 
 public class MainController {
@@ -65,10 +66,12 @@ public class MainController {
     private final static double DIALOGS_PANE_MIN_WIDTH = 250;
     private final static int MESSAGES_UPDATE_TIME_MS = 1000;
 
+    private String regexDialogsFilter = "";
+
     @FXML
     public AnchorPane dialogsAnchorPane;
     @FXML
-    public MenuButton accountsChoice;
+    public Button searchButton;
     @FXML
     public TextField searchTextField;
     @FXML
@@ -86,7 +89,7 @@ public class MainController {
                     boolean updated = App.MESSENGERS_ADAPTER.updateChats();
 
                     if (updated) {
-                        Platform.runLater(MainController.this::updateDialogsScreen);
+                        updateDialogsScreen(regexDialogsFilter);
                         Platform.runLater(MainController.this::updateChatScreen);
                     }
                     return updated;
@@ -95,13 +98,11 @@ public class MainController {
         }
     };
 
-    public void updateDialogsScreen(String... messengerNames) {
+    public void updateDialogsScreen(String regex) {
         ObservableList<Chat> items = FXCollections.observableArrayList();
+        items.addAll(App.MESSENGERS_ADAPTER.getChats(regex));
 
-        items.addAll(App.MESSENGERS_ADAPTER.getChats(messengerNames));
-
-        dialogsListView.setItems(items);
-        dialogsListView.refresh();
+        Platform.runLater(() -> dialogsListView.setItems(items));
     }
 
     private void initializeDialogs() {
@@ -143,6 +144,11 @@ public class MainController {
     public void onBackToDialogs(ActionEvent actionEvent) {
         chat = null;
         initializeEmptyChat();
+    }
+
+    public void onSearchClicked(ActionEvent actionEvent) {
+        regexDialogsFilter = searchTextField.getText();
+        updateDialogsScreen(regexDialogsFilter);
     }
 
     class ChatCell extends ListCell<Chat> {
@@ -280,6 +286,7 @@ public class MainController {
     private void updateChatScreen() {
         if (chat != null) {
             ObservableList<Message> items = chatListView.getItems();
+
             if (items.get(items.size() - 1) != chat.getLastMessage()) {
                 items.add(chat.getLastMessage());
             }

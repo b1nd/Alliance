@@ -53,7 +53,7 @@ public class App extends Application {
     private void loadAccounts(String path) throws ClassNotFoundException {
         try {
             MESSENGERS_ADAPTER.loadAccounts(path);
-            Platform.runLater(() -> MainController.getInstance().updateDialogsScreen());
+            Platform.runLater(() -> MainController.getInstance().updateDialogsScreen(""));
         } catch (IOException e) {
             System.out.println("No saved accounts found");
         }

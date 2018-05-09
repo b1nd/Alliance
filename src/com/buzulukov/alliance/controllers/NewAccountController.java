@@ -49,7 +49,7 @@ public class NewAccountController {
     }
 
     public void onUpdateClicked(ActionEvent actionEvent) {
-        Platform.runLater(() -> MainController.getInstance().updateDialogsScreen());
+        Platform.runLater(() -> MainController.getInstance().updateDialogsScreen(""));
         App.newAccountStage.close();
     }
 

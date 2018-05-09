@@ -27,21 +27,24 @@ public class MessengersAdapter {
         messengers = new HashMap<>();
     }
 
-    public LinkedList<Chat> getChats(String... names) {
+    public LinkedList<Chat> getChats(String regex) {
         var chats = new LinkedList<Chat>();
 
-        if (names.length == 0) {
+        if (regex.isEmpty()) {
             for (var messenger : messengers.values()) {
                 if (messenger.isAuthorized()) {
                     chats.addAll(messenger.getChats());
                 }
             }
         } else {
-            var namesList = new LinkedList<>(Arrays.asList(names));
-
             for (var messenger : messengers.values()) {
-                if (messenger.isAuthorized() && namesList.contains(messenger.getName())) {
-                    chats.addAll(messenger.getChats());
+                if (messenger.isAuthorized()) {
+                    for (var chat : messenger.getChats()) {
+                        if (chat.getLibraryName().matches(".*" + regex + ".*") ||
+                                chat.getTitle().matches(".*" + regex + ".*") ||
+                                chat.getLastMessage().getText().matches(".*" + regex + ".*"))
+                            chats.addLast(chat);
+                    }
                 }
             }
         }
@@ -101,7 +104,7 @@ public class MessengersAdapter {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path))) {
             Object ob = ois.readObject();
 
-            if(ob instanceof HashMap) {
+            if (ob instanceof HashMap) {
                 messengers = (HashMap<String, Messenger>) ob;
                 loaded = true;
             }
