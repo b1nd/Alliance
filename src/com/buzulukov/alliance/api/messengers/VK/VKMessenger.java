@@ -201,6 +201,7 @@ public class VKMessenger implements Messenger, Serializable {
         // userId == 0 -> message from conference.
         if (chatId == 0) {
             response = WebUtils.getResponse(METHOD_URI + "users.get",
+                    "access_token=" + accessToken,
                     "user_ids=" + userId,
                     "fields=photo_50",
                     "v=" + API_VERSION);

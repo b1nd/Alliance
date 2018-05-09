@@ -74,10 +74,10 @@ public class MainController {
     @FXML
     public ListView<Chat> dialogsListView;
 
-    private ScheduledService<Boolean> updateService = new ScheduledService<Boolean>() {
+    private ScheduledService<Boolean> updateService = new ScheduledService<>() {
         @Override
         protected Task<Boolean> createTask() {
-            return new Task<Boolean>() {
+            return new Task<>() {
                 @Override
                 protected Boolean call() {
                     if (isCancelled()) {
