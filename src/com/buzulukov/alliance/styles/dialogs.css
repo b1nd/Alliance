@@ -66,10 +66,40 @@
     -fx-background-color: #3d444b;
 }
 
-.menu-button-choice {
+.combo-box-choice {
     -fx-background-color: #3d444b;
     -fx-text-fill: #6e939e;
     -fx-font-family: Tahoma;
+    -fx-border-radius: 2px;
+    -fx-border-color: #6e939e;
+}
+
+.combo-box-choice .list-cell {
+    -fx-background-color: #3d444b;
+    -fx-text-fill: #6e939e;
+    -fx-font-family: Tahoma;
+}
+
+.combo-box-choice .list-cell:hover {
+    -fx-background-color: #009287;
+    -fx-text-fill: #fafafa;
+    -fx-font-family: Tahoma;
+}
+
+.button-main {
+    -fx-text-fill: #6e939e;
+    -fx-font-family: Tahoma;
+    -fx-text-align: center;
+    -fx-text-decoration: none;
+    -fx-display: inline-block;
+    -fx-background-color: transparent;
+    -fx-border-radius: 2px;
+    -fx-border-color: #6e939e;
+}
+
+.button-main:hover {
+    -fx-background-color: #009287;
+    -fx-text-fill: #fafafa;
 }
 
 .list-view-dialogs {

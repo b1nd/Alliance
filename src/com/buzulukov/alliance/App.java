@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -34,6 +35,7 @@ public class App extends Application {
         App.mainStage = mainStage;
         mainStage.setScene(new Scene(mainRoot));
         mainStage.setTitle("Alliance");
+        mainStage.getIcons().add(new Image("com/buzulukov/alliance/resources/logo-main.png"));
 
         initializeSettings();
 
@@ -88,6 +90,7 @@ public class App extends Application {
         if (newAccountStage == null) {
             try {
                 newAccountRoot = FXMLLoader.load(App.class.getResource("layouts/newAccount.fxml"));
+                newAccountRoot.getStylesheets().add("com/buzulukov/alliance/styles/dialogs.css");
             } catch (IOException e) {
                 e.printStackTrace();
             }

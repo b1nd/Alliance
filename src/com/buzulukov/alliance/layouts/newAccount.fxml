@@ -12,26 +12,26 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="130.0" prefWidth="270.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.buzulukov.alliance.controllers.NewAccountController">
+<AnchorPane styleClass="pane" prefHeight="130.0" prefWidth="270.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.buzulukov.alliance.controllers.NewAccountController">
     <children>
-        <VBox layoutX="100.0" layoutY="-33.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox styleClass="container" layoutX="100.0" layoutY="-33.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <HBox prefHeight="90.0" prefWidth="200.0">
                     <children>
                         <VBox HBox.hgrow="ALWAYS">
                             <children>
-                                <Label prefWidth="160.0" text="New account login type">
+                                <Label styleClass="label-bold" prefWidth="160.0" text="New account login type">
                                     <VBox.margin>
                                         <Insets bottom="5.0" />
                                     </VBox.margin>
                                 </Label>
-                                <ComboBox fx:id="accChoiceComboBox" maxWidth="-Infinity" prefWidth="130.0" />
+                                <ComboBox styleClass="combo-box-choice" fx:id="accChoiceComboBox" maxWidth="-Infinity" prefWidth="130.0" />
                             </children>
                             <padding>
                                 <Insets left="20.0" top="15.0" />
                             </padding>
                         </VBox>
-                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#onLoginClicked" prefWidth="65.0" text="LOGIN" HBox.hgrow="NEVER">
+                        <Button styleClass="button-main" alignment="CENTER" mnemonicParsing="false" onAction="#onLoginClicked" prefWidth="65.0" text="LOGIN" HBox.hgrow="NEVER">
                             <HBox.margin>
                                 <Insets right="15.0" top="30.0" />
                             </HBox.margin>
@@ -40,8 +40,8 @@
                 </HBox>
                 <HBox alignment="TOP_RIGHT" spacing="20.0">
                     <children>
-                        <Button mnemonicParsing="false" onAction="#onCancelClicked" text="CANCEL" />
-                        <Button mnemonicParsing="false" onAction="#onUpdateClicked" text="UPDATE">
+                        <Button styleClass="button-main" mnemonicParsing="false" onAction="#onCancelClicked" text="CANCEL" />
+                        <Button styleClass="button-main" mnemonicParsing="false" onAction="#onUpdateClicked" text="UPDATE">
                             <HBox.margin>
                                 <Insets right="15.0" />
                             </HBox.margin>
