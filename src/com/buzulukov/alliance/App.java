@@ -1,6 +1,7 @@
 package com.buzulukov.alliance;
 
 import com.buzulukov.alliance.api.MessengersAdapter;
+import com.buzulukov.alliance.controllers.AccountsController;
 import com.buzulukov.alliance.controllers.MainController;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -19,9 +20,11 @@ public class App extends Application {
 
     public static final MessengersAdapter MESSENGERS_ADAPTER = MessengersAdapter.getInstance();
 
-    public static Stage newAccountStage;
+    public static Stage accountsStage;
     public static Stage mainStage;
     public static Stage settingsStage;
+    public static Stage newAccountStage;
+    public static Parent accountsRoot;
     public static Parent mainRoot;
     public static Parent settingsRoot;
     public static Parent newAccountRoot;
@@ -106,5 +109,28 @@ public class App extends Application {
         newAccountStage.setX(mainStage.getX() + (mainStage.getWidth() - newAccountStage.getWidth()) / 2);
         newAccountStage.setY(mainStage.getY() + (mainStage.getHeight() - newAccountStage.getHeight()) / 2);
         newAccountStage.show();
+    }
+
+    public static void showAccountsWindow() {
+        if (accountsStage == null) {
+            try {
+                accountsRoot = FXMLLoader.load(App.class.getResource("layouts/accounts.fxml"));
+                accountsRoot.getStylesheets().add("com/buzulukov/alliance/styles/dialogs.css");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            accountsStage = new Stage();
+            accountsStage.setWidth(350);
+            accountsStage.setHeight(400);
+            accountsStage.setResizable(false);
+            accountsStage.setScene(new Scene(accountsRoot));
+            accountsStage.initModality(Modality.WINDOW_MODAL);
+            accountsStage.initOwner(mainStage);
+            accountsStage.initStyle(StageStyle.TRANSPARENT);
+        }
+        AccountsController.getInstance().updateAccountsScreen();
+        accountsStage.setX(mainStage.getX() + (mainStage.getWidth() - accountsStage.getWidth()) / 2);
+        accountsStage.setY(mainStage.getY() + (mainStage.getHeight() - accountsStage.getHeight()) / 2);
+        accountsStage.show();
     }
 }

@@ -24,8 +24,7 @@ import java.util.regex.Pattern;
 
 public class NewAccountController {
 
-    @FXML
-    public ComboBox<String> accChoiceComboBox;
+    @FXML public ComboBox<String> accChoiceComboBox;
 
     public void initialize() {
         ObservableList<String> items = FXCollections.observableArrayList(App.MESSENGERS_ADAPTER.getMessengerNames());
@@ -39,7 +38,7 @@ public class NewAccountController {
 
         if (accChoiceComboBox.getValue().equals(App.MESSENGERS_ADAPTER.getMessengerNames()[0])) {
             loginFacade.loginVK();
-        } else if(accChoiceComboBox.getValue().equals(App.MESSENGERS_ADAPTER.getMessengerNames()[1])) {
+        } else if (accChoiceComboBox.getValue().equals(App.MESSENGERS_ADAPTER.getMessengerNames()[1])) {
             loginFacade.loginSlack();
         }
     }

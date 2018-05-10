@@ -7,10 +7,10 @@ import java.util.LinkedList;
 
 public class SlackMessage implements Message {
 
-    public String timestamp;
-    private String text;
-    private String username;
-    private Date date;
+    public  String  timestamp;
+    private String  text;
+    private String  username;
+    private Date    date;
     private boolean outgoing;
     private LinkedList<String> imagesUrl;
 

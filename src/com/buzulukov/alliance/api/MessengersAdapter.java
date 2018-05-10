@@ -4,10 +4,10 @@ import com.buzulukov.alliance.api.messengers.Chat;
 import com.buzulukov.alliance.api.messengers.Messenger;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class MessengersAdapter {
 
@@ -58,6 +58,10 @@ public class MessengersAdapter {
 
     public String[] getMessengerNames() {
         return MessengersFactory.MESSENGER_NAMES;
+    }
+
+    public Set<String> getAccountNames() {
+        return messengers.keySet();
     }
 
     public boolean authorize(String messengerName, String... params) {

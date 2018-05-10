@@ -5,7 +5,6 @@ import com.buzulukov.alliance.api.messengers.Message;
 import com.buzulukov.alliance.web.utils.WebUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -14,12 +13,12 @@ import java.util.Random;
 
 public class VKChat implements Chat {
 
-    String accessToken;
-    String chatPhotoUri;
-    String title;
-    int id;
-    LinkedList<Message> messages;
+    String  accessToken;
+    String  chatPhotoUri;
+    String  title;
+    int     id;
     boolean allMessagesLoaded;
+    LinkedList<Message> messages;
 
     VKChat(String accessToken, String chatPhotoUri, String title, int id) {
         this.accessToken = accessToken;

@@ -23,8 +23,7 @@ public class SettingsController {
         return settingsController;
     }
 
-    @FXML
-    public ListView<HBox> menuListView;
+    @FXML public ListView<HBox> menuListView;
 
     public void initialize() {
         initializeMenuListView();
@@ -35,6 +34,7 @@ public class SettingsController {
         final Insets imageInsets = new Insets(0, 0, 0, 20);
         final Insets labelInsets = new Insets(4, 0, 0, 0);
 
+        // Add account.
         ImageView newAccountImage = new ImageView(new Image(
                 "com/buzulukov/alliance/resources/add-account-button.png",
                 24, 24,
@@ -50,8 +50,24 @@ public class SettingsController {
         newAccountHBox.setPadding(hBoxInsets);
         newAccountHBox.setOnMouseClicked(event -> App.showNewAccountWindow());
 
+        // All accounts.
+        ImageView accountsImage = new ImageView(new Image(
+                "com/buzulukov/alliance/resources/my-accounts-button.png",
+                24, 24,
+                true, true, false));
+        Label accountsLabel = new Label("My Accounts");
+        accountsLabel.getStyleClass().setAll("label-bold");
+
+        HBox accountsHBox = new HBox(accountsImage, accountsLabel);
+        accountsHBox.setMinHeight(31);
+        HBox.setMargin(accountsImage, imageInsets);
+        HBox.setMargin(accountsLabel, labelInsets);
+        accountsHBox.setSpacing(20);
+        accountsHBox.setPadding(hBoxInsets);
+        accountsHBox.setOnMouseClicked(event -> App.showAccountsWindow());
+
         ObservableList<HBox> items = FXCollections.observableArrayList();
-        items.addAll(newAccountHBox);
+        items.addAll(newAccountHBox, accountsHBox);
 
         menuListView.setItems(items);
     }

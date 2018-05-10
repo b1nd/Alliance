@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.Random;
 
 public class VKMessenger implements Messenger, Serializable {
 
@@ -20,9 +19,9 @@ public class VKMessenger implements Messenger, Serializable {
     public static final String METHOD_URI = "https://api.vk.com/method/";
     public static final String API_VERSION = "5.71";
 
-    private String accessToken;
-    private String accountInfo;
-    private int userId;
+    private String  accessToken;
+    private String  accountInfo;
+    private int     userId;
     private boolean isAuthorized;
 
     private transient LinkedList<Chat> chats;
@@ -236,7 +235,7 @@ public class VKMessenger implements Messenger, Serializable {
         return true;
     }
 
-     static VKMessage createMessageFromJsonObject(JsonObject messageObject) {
+    static VKMessage createMessageFromJsonObject(JsonObject messageObject) {
         String messageText = messageObject.get("body").getAsString();
 
         if (messageText.isEmpty()) {

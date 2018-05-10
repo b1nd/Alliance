@@ -16,9 +16,9 @@ public class SlackMessenger implements Messenger, Serializable {
     public static final String LIBRARY_NAME = "Slack";
     public static final String METHOD_URI = "https://slack.com/api/";
 
-    private String userId;
-    private String accountInfo;
-    private String accessToken;
+    private String  userId;
+    private String  accountInfo;
+    private String  accessToken;
     private boolean isAuthorized;
 
     private transient LinkedList<Chat> chats;
@@ -94,7 +94,7 @@ public class SlackMessenger implements Messenger, Serializable {
                 var channelResponseObject = new JsonParser().parse(channelResponse).getAsJsonObject()
                         .get("channel").getAsJsonObject();
 
-                if(!channelResponseObject.has("latest")) {
+                if (!channelResponseObject.has("latest")) {
                     continue;
                 }
                 var latestMessageObject = channelResponseObject.get("latest").getAsJsonObject();

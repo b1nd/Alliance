@@ -13,7 +13,7 @@ import java.util.LinkedList;
 
 public class SlackChat implements Chat {
 
-    public String id;
+    String id;
     String chatPhotoUri;
     String token;
     String title;

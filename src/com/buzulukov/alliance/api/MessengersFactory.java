@@ -4,9 +4,9 @@ import com.buzulukov.alliance.api.messengers.Messenger;
 import com.buzulukov.alliance.api.messengers.Slack.SlackMessenger;
 import com.buzulukov.alliance.api.messengers.VK.VKMessenger;
 
-public class MessengersFactory {
+class MessengersFactory {
 
-    public static final String[] MESSENGER_NAMES = {
+    static final String[] MESSENGER_NAMES = {
             VKMessenger.LIBRARY_NAME,
             SlackMessenger.LIBRARY_NAME
     };

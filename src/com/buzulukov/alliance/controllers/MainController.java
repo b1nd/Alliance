@@ -29,7 +29,6 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.concurrent.Callable;
 
 public class MainController {
@@ -39,10 +38,8 @@ public class MainController {
     // Date format: 23:24
     private static final SimpleDateFormat HOURS_MINS = new SimpleDateFormat("HH:mm");
 
-    @FXML
-    public SplitPane dialogsChatSplitPane;
-    @FXML
-    public Button settingsButton;
+    @FXML public SplitPane dialogsChatSplitPane;
+    @FXML public Button settingsButton;
 
     private static MainController mainController;
 
@@ -68,14 +65,10 @@ public class MainController {
 
     private String regexDialogsFilter = "";
 
-    @FXML
-    public AnchorPane dialogsAnchorPane;
-    @FXML
-    public Button searchButton;
-    @FXML
-    public TextField searchTextField;
-    @FXML
-    public ListView<Chat> dialogsListView;
+    @FXML public AnchorPane dialogsAnchorPane;
+    @FXML public Button searchButton;
+    @FXML public TextField searchTextField;
+    @FXML public ListView<Chat> dialogsListView;
 
     private ScheduledService<Boolean> updateService = new ScheduledService<>() {
         @Override
@@ -154,8 +147,7 @@ public class MainController {
     class ChatCell extends ListCell<Chat> {
         private final Insets INSETS = new Insets(5);
 
-        @Override
-        protected void updateItem(Chat item, boolean empty) {
+        @Override protected void updateItem(Chat item, boolean empty) {
             super.updateItem(item, empty);
 
             if (item == null || empty) {
@@ -248,22 +240,14 @@ public class MainController {
     private static final double CHAT_PANE_MIN_WIDTH = 300;
     private static final int TEXT_INPUT_MAX_NUMBER_OF_LINES = 20;
 
-    @FXML
-    public GridPane chatGridPane;
-    @FXML
-    public Button backToDialogsButton;
-    @FXML
-    public Label chatTitleLabel;
-    @FXML
-    public Label lastActivityLabel;
-    @FXML
-    public Label accountLabel;
-    @FXML
-    public ListView<Message> chatListView;
-    @FXML
-    public TextArea sendMessageTextArea;
-    @FXML
-    public Button sendButton;
+    @FXML public GridPane chatGridPane;
+    @FXML public Button backToDialogsButton;
+    @FXML public Label chatTitleLabel;
+    @FXML public Label lastActivityLabel;
+    @FXML public Label accountLabel;
+    @FXML public ListView<Message> chatListView;
+    @FXML public TextArea sendMessageTextArea;
+    @FXML public Button sendButton;
 
     private static Chat chat;
 
@@ -332,8 +316,7 @@ public class MainController {
         sendMessageTextArea.minHeightProperty().bind(Bindings.createDoubleBinding(new Callable<>() {
             private double maxHeight = text.getBoundsInLocal().getHeight() * TEXT_INPUT_MAX_NUMBER_OF_LINES;
 
-            @Override
-            public Double call() {
+            @Override public Double call() {
                 if (text.getBoundsInLocal().getHeight() < maxHeight) {
                     return text.getBoundsInLocal().getHeight();
                 } else {
@@ -377,8 +360,7 @@ public class MainController {
                 textArea.minHeightProperty().bind(Bindings.createDoubleBinding(new Callable<>() {
                     private double maxHeight = text.getBoundsInLocal().getHeight() * TEXT_INPUT_MAX_NUMBER_OF_LINES;
 
-                    @Override
-                    public Double call() {
+                    @Override public Double call() {
                         if (text.getBoundsInLocal().getHeight() < maxHeight) {
                             return text.getBoundsInLocal().getHeight();
                         } else {
@@ -399,8 +381,7 @@ public class MainController {
             }
         }
 
-        @Override
-        protected void updateItem(Message item, boolean empty) {
+        @Override protected void updateItem(Message item, boolean empty) {
             super.updateItem(item, empty);
 
             if (item == null || empty) {
