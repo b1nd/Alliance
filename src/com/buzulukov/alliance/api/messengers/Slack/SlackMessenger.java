@@ -141,13 +141,26 @@ public class SlackMessenger implements Messenger, Serializable {
         String messageText = messageObject.get("text").getAsString();
 
         if (messageObject.has("attachments")) {
-            String attachmentText = messageObject.get("attachments").getAsJsonObject().get("text").getAsString();
+            String attachmentText;
+            if(messageObject.get("attachments").isJsonObject()) {
+                attachmentText = messageObject.get("attachments").getAsJsonObject().get("text").getAsString();
+            } else {
+                attachmentText = messageObject.get("attachments").getAsJsonArray().get(0)
+                        .getAsJsonObject().get("text").getAsString();
+            }
             messageText += "\n" + "Attachment: " + attachmentText;
         }
 
         String messageTimestamp = messageObject.get("ts").getAsString();
-        String messageUsername = messageObject.get("user").getAsString();
-        boolean messageOutgoing = Objects.equals(messageUsername, username);
+        String messageUsername = "System";
+        boolean messageOutgoing = false;
+
+        try {
+            messageUsername = messageObject.get("user").getAsString();
+            messageOutgoing = Objects.equals(messageUsername, username);
+        } catch (NullPointerException e) {
+            // Do nothing right now.
+        }
 
         return new SlackMessage(messageText, messageTimestamp, messageUsername, messageOutgoing);
     }
