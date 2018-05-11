@@ -2,7 +2,7 @@ package com.buzulukov.alliance.controllers;
 
 import com.buzulukov.alliance.App;
 import com.buzulukov.alliance.api.messengers.Slack.SlackMessenger;
-import com.buzulukov.alliance.web.utils.WebUtils;
+import com.buzulukov.alliance.api.web.utils.WebUtils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import javafx.application.Platform;

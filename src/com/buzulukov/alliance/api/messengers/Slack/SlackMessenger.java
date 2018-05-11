@@ -2,7 +2,7 @@ package com.buzulukov.alliance.api.messengers.Slack;
 
 import com.buzulukov.alliance.api.messengers.Chat;
 import com.buzulukov.alliance.api.messengers.Messenger;
-import com.buzulukov.alliance.web.utils.WebUtils;
+import com.buzulukov.alliance.api.web.utils.WebUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

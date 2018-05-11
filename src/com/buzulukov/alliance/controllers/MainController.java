@@ -61,7 +61,7 @@ public class MainController {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     private final static double DIALOGS_PANE_MIN_WIDTH = 250;
-    private final static int MESSAGES_UPDATE_TIME_MS = 1000;
+    private final static int MESSAGES_UPDATE_TIME_MS = 1500;
 
     private String regexDialogsFilter = "";
 

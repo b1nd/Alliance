@@ -1,4 +1,4 @@
-package com.buzulukov.alliance.web.utils;
+package com.buzulukov.alliance.api.web.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
