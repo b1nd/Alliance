@@ -148,6 +148,24 @@ public class MainController {
         private final Insets INSETS = new Insets(5);
 
         @Override protected void updateItem(Chat item, boolean empty) {
+            TextField textCheck = null;
+            Label libraryCheck = null;
+            Label titleCheck = null;
+            Label dateCheck = null;
+
+            if(super.getGraphic() != null) {
+                libraryCheck = (Label) super.getGraphic().lookup("#library-name");
+                dateCheck = (Label) super.getGraphic().lookup("#date-label");
+                titleCheck = (Label) super.getGraphic().lookup("#title-label");
+                textCheck = (TextField) super.getGraphic().lookup("#message-text");
+            }
+            if(item != null && libraryCheck != null && dateCheck != null && titleCheck != null && textCheck != null &&
+                    libraryCheck.getText().equals(item.getLibraryName()) &&
+                    titleCheck.getText().equals(item.getTitle()) &&
+                    dateCheck.getText().equals(" " + HOURS_MINS.format(item.getLastMessage().getDate())) &&
+                    textCheck.getText().equals(item.getLastMessage().getText())) {
+                return;
+            }
             super.updateItem(item, empty);
 
             if (item == null || empty) {
@@ -169,13 +187,16 @@ public class MainController {
                     setGraphic(stackPane);
                 } else {
                     Label titleLabel = new Label(item.getTitle());
+                    titleLabel.setId("title-label");
                     titleLabel.getStyleClass().add("label-bold");
                     titleLabel.setPadding(new Insets(2, 0, 0, 0));
                     Label dateLabel = new Label(" " + HOURS_MINS.format(item.getLastMessage().getDate()));
+                    dateLabel.setId("date-label");
                     dateLabel.setMinWidth(35);
                     dateLabel.setPadding(new Insets(2, 0, 0, 0));
                     dateLabel.getStyleClass().add("label-message");
                     Label libraryNameLabel = new Label(item.getLibraryName());
+                    libraryNameLabel.setId("library-name");
                     libraryNameLabel.setMinWidth(0);
                     libraryNameLabel.setTextOverrun(OverrunStyle.CLIP);
                     libraryNameLabel.setPadding(new Insets(2, 0, 0, 0));
@@ -191,10 +212,10 @@ public class MainController {
                         messageText = messageText.substring(0, messageText.indexOf("\n")) + "...";
                     }
                     TextField messageTextField = new TextField(messageText);
+                    messageTextField.setId("message-text");
                     messageTextField.setEditable(false);
                     messageTextField.getStyleClass().setAll("text-field-message");
                     messageTextField.setPadding(new Insets(5, 0, 0, 0));
-
                     Label fromLabel;
 
                     if (item.getLastMessage().isOutgoing()) {
