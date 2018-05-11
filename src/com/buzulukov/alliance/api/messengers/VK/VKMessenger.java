@@ -217,17 +217,16 @@ public class VKMessenger implements Messenger, Serializable {
         chat.getMessages().addLast(message);
 
         for (var chatIt : chats) {
-            if (chatIt.getTitle().equals(chat.getTitle())) {
-                if (chatId != 0) {
-                    if (((VKChat) chatIt).id == chat.id) {
-                        chatIt.getMessages().addLast(message);
-                        return true;
-                    }
-                } else {
-                    if (((VKMessage) chatIt.getLastMessage()).userId == message.userId) {
-                        chatIt.getMessages().addLast(message);
-                        return true;
-                    }
+            if (chatId != 0) {
+                if (((VKChat) chatIt).id == chat.id) {
+                    chatIt.getMessages().addLast(message);
+                    return true;
+                }
+            } else {
+                if (chatIt.getTitle().equals(chat.getTitle()) &&
+                        ((VKMessage) chatIt.getLastMessage()).userId == message.userId) {
+                    chatIt.getMessages().addLast(message);
+                    return true;
                 }
             }
         }
